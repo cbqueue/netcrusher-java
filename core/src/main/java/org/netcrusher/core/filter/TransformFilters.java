@@ -18,14 +18,14 @@ public final class TransformFilters {
             throw new IllegalArgumentException("Filter array is empty");
         }
 
-        return (clientAddress) -> {
+        return clientAddress -> {
             final List<TransformFilter> filters = new ArrayList<>(filterFactories.length);
 
             for (TransformFilterFactory factory : filterFactories) {
                 filters.add(factory.allocate(clientAddress));
             }
 
-            return (bb) -> {
+            return bb -> {
                 for (TransformFilter filter : filters) {
                     filter.transform(bb);
                 }

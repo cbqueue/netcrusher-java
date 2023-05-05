@@ -76,23 +76,21 @@ public class LoggingFilter implements TransformFilter {
     }
 
     private void log(InetSocketAddress clientAddress, int size, CharSequence data) {
-        Object[] params = { clientAddress, size, data };
-
         switch (level) {
             case TRACE:
-                logger.trace("<{}> ({}): {}", params);
+                logger.trace("<{}> ({}): {}", clientAddress, size, data);
                 break;
             case DEBUG:
-                logger.debug("<{}> ({}): {}", params);
+                logger.debug("<{}> ({}): {}", clientAddress, size, data);
                 break;
             case INFO:
-                logger.info("<{}> ({}): {}", params);
+                logger.info("<{}> ({}): {}", clientAddress, size, data);
                 break;
             case WARN:
-                logger.warn("<{}> ({}): {}", params);
+                logger.warn("<{}> ({}): {}", clientAddress, size, data);
                 break;
             case ERROR:
-                logger.error("<{}> ({}): {}", params);
+                logger.error("<{}> ({}): {}", clientAddress, size, data);
                 break;
             default:
                 break;

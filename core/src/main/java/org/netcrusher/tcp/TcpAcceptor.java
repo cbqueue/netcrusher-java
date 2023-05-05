@@ -80,7 +80,7 @@ class TcpAcceptor implements NetFreezer {
         }
 
         this.serverSelectionKey = reactor.getSelector()
-            .register(serverSocketChannel, 0, (selectionKey) -> this.accept());
+            .register(serverSocketChannel, 0, selectionKey -> this.accept());
 
         this.state = new State(State.FROZEN);
     }
@@ -107,6 +107,7 @@ class TcpAcceptor implements NetFreezer {
         });
     }
 
+    @SuppressWarnings("PMD.CloseResource")
     private void accept() throws IOException {
         final SocketChannel socketChannel1 = serverSocketChannel.accept();
         socketChannel1.configureBlocking(false);
@@ -152,7 +153,7 @@ class TcpAcceptor implements NetFreezer {
         }
     }
 
-    private void connectDeferred(SocketChannel socketChannel1, SocketChannel socketChannel2) throws IOException {
+    private void connectDeferred(SocketChannel socketChannel1, SocketChannel socketChannel2) {
         if (socketOptions.getConnectionTimeoutMs() > 0) {
             reactor.getSelector().schedule(() -> {
                 if (socketChannel2.isOpen() && !socketChannel2.isConnected()) {
@@ -165,7 +166,7 @@ class TcpAcceptor implements NetFreezer {
             }, TimeUnit.MILLISECONDS.toNanos(socketOptions.getConnectionTimeoutMs()));
         }
 
-        reactor.getSelector().register(socketChannel2, SelectionKey.OP_CONNECT, (selectionKey) -> {
+        reactor.getSelector().register(socketChannel2, SelectionKey.OP_CONNECT, selectionKey -> {
             boolean connected;
             try {
                 connected = socketChannel2.finishConnect();
@@ -254,13 +255,13 @@ class TcpAcceptor implements NetFreezer {
 
     private static final class State extends BitState {
 
-        private static final int OPEN = bit(0);
+        static final int OPEN = bit(0);
 
-        private static final int FROZEN = bit(1);
+        static final int FROZEN = bit(1);
 
-        private static final int CLOSED = bit(2);
+        static final int CLOSED = bit(2);
 
-        private State(int state) {
+        State(int state) {
             super(state);
         }
     }

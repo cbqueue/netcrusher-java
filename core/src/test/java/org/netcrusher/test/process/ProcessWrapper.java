@@ -75,7 +75,7 @@ public class ProcessWrapper {
         private CompletableFuture<ProcessResult> open() {
             start();
 
-            // poor man's garantee that process started and sockets are opened
+            // poor man's guarantee that process started and sockets are opened
             try {
                 Thread.sleep(PROCESS_INIT_MS);
             } catch (InterruptedException e) {
@@ -107,6 +107,7 @@ public class ProcessWrapper {
 
             int exitCode;
             try {
+                LOGGER.debug("Waiting for process to complete...");
                 exitCode = process.waitFor();
             } catch (InterruptedException e) {
                 LOGGER.error("Unexpected interruption", e);

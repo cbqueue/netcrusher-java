@@ -116,7 +116,7 @@ public class TcpBulkClient implements AutoCloseable {
             }
         }
 
-        public void loop() throws Exception {
+        public void loop() {
             LOGGER.debug("Read loop {} started", name);
 
             final ByteBuffer bb = ByteBuffer.allocate(BUFFER_SIZE);
@@ -189,7 +189,7 @@ public class TcpBulkClient implements AutoCloseable {
             }
         }
 
-        private void loop() throws Exception {
+        private void loop() {
             LOGGER.debug("Send loop {} started", name);
 
             final ByteBuffer bb = ByteBuffer.allocate(BUFFER_SIZE);

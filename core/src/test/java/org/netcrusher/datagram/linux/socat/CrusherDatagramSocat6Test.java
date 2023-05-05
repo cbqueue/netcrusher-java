@@ -29,7 +29,7 @@ public class CrusherDatagramSocat6Test extends AbstractDatagramSocatTest {
             .withBindAddress(ADDR_LOOPBACK6, PORT_DIRECT)
             .withConnectAddress(ADDR_LOOPBACK6, PORT_PROXY)
             .withProtocolFamily(StandardProtocolFamily.INET6)
-            .withCreationListener((addr) -> LOGGER.info("Client is created <{}>", addr))
+            .withCreationListener(addr -> LOGGER.info("Client is created <{}>", addr))
             .withDeletionListener((addr, byteMeters, packetMeters) -> LOGGER.info("Client is deleted <{}>", addr))
             .buildAndOpen();
     }

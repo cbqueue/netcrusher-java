@@ -24,7 +24,7 @@ public class IncomingCountThottlingDatagramTest extends AbstractRateThottlingDat
             .withBindAddress(host, bindPort)
             .withConnectAddress(host, connectPort)
             .withIncomingGlobalThrottler(new PacketRateThrottler(PACKET_PER_SEC, 1, TimeUnit.SECONDS))
-            .withCreationListener((addr) -> LOGGER.info("Client is created <{}>", addr))
+            .withCreationListener(addr -> LOGGER.info("Client is created <{}>", addr))
             .withDeletionListener((addr, byteMeters, packetMeters) -> LOGGER.info("Client is deleted <{}>", addr))
             .buildAndOpen();
     }

@@ -32,7 +32,7 @@ public class DatagramBulkReflector implements AutoCloseable {
         this.channel.bind(bindAddress);
 
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Bulk reflector {}: BIND<{}>", new Object[]{name, bindAddress});
+            LOGGER.debug("Bulk reflector {}: BIND<{}>", name, bindAddress);
         }
 
         this.reflector = new Reflector(channel, name, limit, readBarrier);
@@ -164,7 +164,7 @@ public class DatagramBulkReflector implements AutoCloseable {
 
                 if (emptyDatagram || sent > 0) {
                     if (bb.hasRemaining()) {
-                        throw new IllegalStateException("Datagram is splitted");
+                        throw new IllegalStateException("Datagram is split");
                     } else {
                         break;
                     }

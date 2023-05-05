@@ -26,7 +26,7 @@ public class CrusherTcpSocat6Test extends AbstractTcpSocatTest {
             .withReactor(reactor)
             .withBindAddress(ADDR_LOOPBACK6, PORT_DIRECT)
             .withConnectAddress(ADDR_LOOPBACK6, PORT_PROXY)
-            .withCreationListener((addr) -> LOGGER.info("Client is created <{}>", addr))
+            .withCreationListener(addr -> LOGGER.info("Client is created <{}>", addr))
             .withDeletionListener((addr, byteMeters) -> LOGGER.info("Client is deleted <{}>", addr))
             .buildAndOpen();
     }

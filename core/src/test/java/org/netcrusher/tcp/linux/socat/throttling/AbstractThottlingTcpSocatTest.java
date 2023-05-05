@@ -53,7 +53,7 @@ public abstract class AbstractThottlingTcpSocatTest extends AbstractTcpSocatTest
             .withSndBufferSize(bytePerSec / 2)
             .withOutgoingThrottlerFactory((addr) ->
                 new ByteRateThrottler(bytePerSec, 1, TimeUnit.SECONDS))
-            .withCreationListener((addr) -> LOGGER.info("Client is created <{}>", addr))
+            .withCreationListener(addr -> LOGGER.info("Client is created <{}>", addr))
             .withDeletionListener((addr, byteMeters) -> LOGGER.info("Client is deleted <{}>", addr))
             .buildAndOpen();
     }
@@ -76,7 +76,7 @@ public abstract class AbstractThottlingTcpSocatTest extends AbstractTcpSocatTest
         ProcessResult result = loop(SOCAT4_PROCESSOR, SOCAT4_REFLECTOR_PROXIED, durationSec * bytePerSec, FULL_THROUGHPUT);
 
         String consumerDuration = result.getOutput().stream()
-            .map((s) -> {
+            .map(s -> {
                 Matcher matcher = DURATION.matcher(s);
                 if (matcher.find()) {
                     return matcher.group(1);

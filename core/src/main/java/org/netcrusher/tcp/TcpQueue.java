@@ -73,7 +73,7 @@ class TcpQueue {
     public void reset() {
         writable.addAll(readable);
         readable.clear();
-        writable.forEach((e) -> e.getBuffer().clear());
+        writable.forEach(e -> e.getBuffer().clear());
     }
 
     public boolean hasReadable() {
@@ -87,11 +87,7 @@ class TcpQueue {
         }
 
         BufferEntry writableEntry = writable.peek();
-        if (writableEntry != null && writableEntry.getBuffer().position() > 0) {
-            return true;
-        }
-
-        return false;
+        return writableEntry != null && writableEntry.getBuffer().position() > 0;
     }
 
     public long calculateReadableBytes() {
@@ -126,7 +122,7 @@ class TcpQueue {
         for (int i = 0; i < size; i++) {
             BufferEntry entry = entryArray[i];
 
-            long delayNs = entry.scheduledNs - nowNs;
+            long delayNs = entry.getScheduledNs() - nowNs;
             if (delayNs > 0) {
                 return new TcpQueueBuffers(bufferArray, 0, i, delayNs);
             } else {
@@ -232,23 +228,27 @@ class TcpQueue {
         }
     }
 
-    private static final class BufferEntry {
+    static final class BufferEntry {
 
         private final ByteBuffer buffer;
 
         private long scheduledNs;
 
-        private BufferEntry(int capacity, boolean direct) {
+        BufferEntry(int capacity, boolean direct) {
             this.buffer = NioUtils.allocaleByteBuffer(capacity, direct);
             this.scheduledNs = System.nanoTime();
         }
 
-        private void schedule(long delayNs) {
+        void schedule(long delayNs) {
             this.scheduledNs = System.nanoTime() + delayNs;
         }
 
-        private ByteBuffer getBuffer() {
+        ByteBuffer getBuffer() {
             return buffer;
+        }
+
+        long getScheduledNs() {
+            return scheduledNs;
         }
 
     }

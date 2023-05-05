@@ -18,14 +18,14 @@ public final class Throttlers {
             throw new IllegalArgumentException("Empty throttler array");
         }
 
-        return (clientAddress) -> {
+        return clientAddress -> {
             final List<Throttler> throttlers = new ArrayList<>(throttlerFactories.length);
 
             for (ThrottlerFactory factory : throttlerFactories) {
                 throttlers.add(factory.allocate(clientAddress));
             }
 
-            return (bb) -> {
+            return bb -> {
                 long delayNs = 0;
                 for (Throttler throttler : throttlers) {
                     delayNs += throttler.calculateDelayNs(bb);
@@ -45,14 +45,14 @@ public final class Throttlers {
             throw new IllegalArgumentException("Empty throttler array");
         }
 
-        return (clientAddress) -> {
+        return clientAddress -> {
             final List<Throttler> throttlers = new ArrayList<>(throttlerFactories.length);
 
             for (ThrottlerFactory factory : throttlerFactories) {
                 throttlers.add(factory.allocate(clientAddress));
             }
 
-            return (bb) -> {
+            return bb -> {
                 long delayNs = Long.MIN_VALUE;
                 for (Throttler throttler : throttlers) {
                     delayNs = Math.max(delayNs, throttler.calculateDelayNs(bb));
@@ -72,14 +72,14 @@ public final class Throttlers {
             throw new IllegalArgumentException("Empty throttler array");
         }
 
-        return (clientAddress) -> {
+        return clientAddress -> {
             final List<Throttler> throttlers = new ArrayList<>(throttlerFactories.length);
 
             for (ThrottlerFactory factory : throttlerFactories) {
                 throttlers.add(factory.allocate(clientAddress));
             }
 
-            return (bb) -> {
+            return bb -> {
                 long delayNs = Long.MAX_VALUE;
                 for (Throttler throttler : throttlers) {
                     delayNs = Math.min(delayNs, throttler.calculateDelayNs(bb));

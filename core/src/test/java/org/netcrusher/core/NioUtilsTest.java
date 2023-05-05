@@ -9,7 +9,7 @@ import java.net.InetSocketAddress;
 public class NioUtilsTest {
 
     @Test
-    public void testParseAddress() throws Exception {
+    public void testParseAddress() {
         InetSocketAddress addr;
 
         addr = NioUtils.parseInetSocketAddress("127.0.0.1:80");

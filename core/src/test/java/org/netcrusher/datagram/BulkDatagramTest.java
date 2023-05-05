@@ -51,14 +51,14 @@ public class BulkDatagramTest {
             .withBindAddress(HOSTNAME, CRUSHER_PORT)
             .withConnectAddress(HOSTNAME, REFLECTOR_PORT)
             .withIncomingTransformFilterFactory(
-                TransformFilters.all((addr) -> TransformFilter.NOOP, (addr) -> InverseFilter.INSTANCE))
+                TransformFilters.all(addr -> TransformFilter.NOOP, (addr) -> InverseFilter.INSTANCE))
             .withOutgoingTransformFilterFactory(
-                TransformFilters.all((addr) -> InverseFilter.INSTANCE, (addr) -> TransformFilter.NOOP))
-            .withIncomingPassFilterFactory((addr) -> PassFilter.NOOP)
-            .withOutgoingPassFilterFactory((addr) -> PassFilter.NOOP)
+                TransformFilters.all(addr -> InverseFilter.INSTANCE, (addr) -> TransformFilter.NOOP))
+            .withIncomingPassFilterFactory(addr -> PassFilter.NOOP)
+            .withOutgoingPassFilterFactory(addr -> PassFilter.NOOP)
             .withIncomingGlobalThrottler(Throttler.NOOP)
-            .withOutgoingThrottlerFactory((addr) -> Throttler.NOOP)
-            .withCreationListener((addr) -> LOGGER.info("Client is created <{}>", addr))
+            .withOutgoingThrottlerFactory(addr -> Throttler.NOOP)
+            .withCreationListener(addr -> LOGGER.info("Client is created <{}>", addr))
             .withDeletionListener((addr, byteMeters, packetMeters) -> LOGGER.info("Client is deleted <{}>", addr))
             .buildAndOpen();
     }

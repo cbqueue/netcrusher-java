@@ -32,7 +32,7 @@ public class CheckLinuxTest extends AbstractLinuxTest {
     }
 
     @Test
-    public void checkMd5Extraction() throws Exception {
+    public void checkMd5Extraction() {
         List<String> hashes = extractMd5(Arrays.asList(
             "rwgrw g w 10f8941b7e6239f4e2af05fa916037fd rwgr",
             "10f8941b7e6239f4e2af05fa916038fd",

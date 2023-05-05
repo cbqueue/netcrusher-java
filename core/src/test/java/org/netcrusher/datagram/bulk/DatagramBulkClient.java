@@ -47,7 +47,7 @@ public class DatagramBulkClient implements AutoCloseable {
 
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Bulk client {}: BIND<{}> CONNECT<{}>",
-                new Object[]{name, bindAddress, connectAddress});
+                name, bindAddress, connectAddress);
         }
 
         this.consumer = new Consumer(channel, name, limit, connectAddress, readBarrier);
@@ -321,7 +321,7 @@ public class DatagramBulkClient implements AutoCloseable {
 
                 if (emptyDatagram || sent > 0) {
                     if (bb.hasRemaining()) {
-                        throw new IllegalStateException("Datagram is splitted");
+                        throw new IllegalStateException("Datagram is split");
                     } else {
                         break;
                     }

@@ -19,7 +19,7 @@ public abstract class AbstractLinuxTest {
     protected static final String ADDR_LOOPBACK6 = "::1";
 
     @BeforeClass
-    public static void checkLinux() throws Exception {
+    public static void checkLinux() {
         String os = System.getProperty("os.name");
         Assume.assumeTrue("This test runs only on Linux", "linux".equalsIgnoreCase(os));
 
@@ -37,7 +37,7 @@ public abstract class AbstractLinuxTest {
 
     protected static Stream<String> extractMd5(Collection<String> lines) {
         return lines.stream()
-            .map((s) -> {
+            .map(s -> {
                 Matcher matcher = MD5_PATTERN.matcher(s);
                 if (matcher.find()) {
                     return matcher.group();

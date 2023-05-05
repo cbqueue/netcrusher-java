@@ -46,8 +46,9 @@ class TcpChannel {
 
     private TcpChannel other;
 
-    TcpChannel(String name, NioReactor reactor, Runnable ownerClose, SocketChannel channel,
-               TcpQueue incomingQueue, TcpQueue outgoingQueue) throws IOException
+    TcpChannel(
+        String name, NioReactor reactor, Runnable ownerClose, SocketChannel channel,
+        TcpQueue incomingQueue, TcpQueue outgoingQueue)
     {
         this.name = name;
         this.reactor = reactor;
@@ -74,7 +75,7 @@ class TcpChannel {
                     freeze();
                 }
 
-                if (meters.sentBytes.getTotalCount() > 0) {
+                if (meters.getSentBytes().getTotalCount() > 0) {
                     NioUtils.close(channel);
                 } else {
                     NioUtils.closeNoLinger(channel);
@@ -96,7 +97,7 @@ class TcpChannel {
         });
     }
 
-    private void closeAll()  {
+    private void closeAll() {
         this.close();
         ownerClose.run();
     }
@@ -123,7 +124,7 @@ class TcpChannel {
         other.processPostOperations();
     }
 
-    private void callback(SelectionKey selectionKey) throws IOException {
+    private void callback(SelectionKey selectionKey) {
         try {
             if (selectionKey.isWritable()) {
                 handleWritableEvent(false);
@@ -178,10 +179,10 @@ class TcpChannel {
             }
 
             if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace("Written {} bytes to {} (forced={})", new Object[] { sent, name, forced });
+                LOGGER.trace("Written {} bytes to {} (forced={})", sent, name, forced);
             }
 
-            meters.sentBytes.update(sent);
+            meters.getSentBytes().update(sent);
         }
 
         other.suggestDeferredRead();
@@ -223,7 +224,7 @@ class TcpChannel {
                 LOGGER.trace("Read {} bytes from {}", read, name);
             }
 
-            meters.readBytes.update(read);
+            meters.getReadBytes().update(read);
 
             other.suggestImmediateSent();
         }
@@ -333,65 +334,73 @@ class TcpChannel {
     }
 
     RateMeter getReadBytesMeter() {
-        return meters.readBytes;
+        return meters.getReadBytes();
     }
 
     RateMeter getSentBytesMeter() {
-        return meters.sentBytes;
+        return meters.getSentBytes();
     }
 
-    private static final class State extends BitState {
+    static final class State extends BitState {
 
-        private static final int OPEN = bit(0);
+        static final int OPEN = bit(0);
 
-        private static final int FROZEN = bit(1);
+        static final int FROZEN = bit(1);
 
-        private static final int CLOSED = bit(2);
+        static final int CLOSED = bit(2);
 
         private boolean readEof;
 
         private boolean sendThrottled;
 
-        private State(int state) {
+        State(int state) {
             super(state);
             this.readEof = false;
             this.sendThrottled = false;
         }
 
-        private void setReadEof(boolean readEof) {
+        void setReadEof(boolean readEof) {
             this.readEof = readEof;
         }
 
-        private boolean isReadEof() {
+        boolean isReadEof() {
             return is(CLOSED) || this.readEof;
         }
 
-        private boolean isSendThrottled() {
+        boolean isSendThrottled() {
             return sendThrottled;
         }
 
-        private void setSendThrottled(boolean sendThrottled) {
+        void setSendThrottled(boolean sendThrottled) {
             this.sendThrottled = sendThrottled;
         }
 
-        private boolean isWritable() {
+        boolean isWritable() {
             return is(OPEN) && !sendThrottled;
         }
 
-        private boolean isReadable() {
+        boolean isReadable() {
             return is(OPEN) && !readEof;
         }
     }
 
-    private static final class Meters {
+    static final class Meters {
 
         private final RateMeterImpl readBytes;
 
         private final RateMeterImpl sentBytes;
 
-        private Meters() {
+        Meters() {
             this.readBytes = new RateMeterImpl();
             this.sentBytes = new RateMeterImpl();
+        }
+
+        public RateMeterImpl getReadBytes() {
+            return readBytes;
+        }
+
+        public RateMeterImpl getSentBytes() {
+            return sentBytes;
         }
     }
 

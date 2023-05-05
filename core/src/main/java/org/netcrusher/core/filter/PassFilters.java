@@ -18,14 +18,14 @@ public final class PassFilters {
             throw new IllegalArgumentException("Filter array is empty");
         }
 
-        return (clientAddress) -> {
+        return clientAddress -> {
             final List<PassFilter> filters = new ArrayList<>(filterFactories.length);
 
             for (PassFilterFactory factory : filterFactories) {
                 filters.add(factory.allocate(clientAddress));
             }
 
-            return (bb) -> {
+            return bb -> {
                 for (PassFilter filter : filters) {
                     if (!filter.check(bb)) {
                         return false;
@@ -46,14 +46,14 @@ public final class PassFilters {
             throw new IllegalArgumentException("Filter array is empty");
         }
 
-        return (clientAddress) -> {
+        return clientAddress -> {
             final List<PassFilter> filters = new ArrayList<>(filterFactories.length);
 
             for (PassFilterFactory factory : filterFactories) {
                 filters.add(factory.allocate(clientAddress));
             }
 
-            return (bb) -> {
+            return bb -> {
                 for (PassFilter filter : filters) {
                     if (filter.check(bb)) {
                         return true;

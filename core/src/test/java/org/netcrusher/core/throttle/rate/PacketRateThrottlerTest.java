@@ -30,7 +30,7 @@ public class PacketRateThrottlerTest {
     }
 
     @Test
-    public void testBulk() throws Exception {
+    public void testBulk() {
         long totalSent = 0;
         long totalElapsedNs = 0;
 
@@ -53,7 +53,7 @@ public class PacketRateThrottlerTest {
     }
 
     @Test
-    public void testSmallRate() throws Exception {
+    public void testSmallRate() {
         // 1 packet per 100 seconds
         PacketRateThrottler lazyThrottler = new PacketRateThrottler(1, 100, TimeUnit.SECONDS,
             AbstractRateThrottler.AUTO_FACTOR, mockChronometer);

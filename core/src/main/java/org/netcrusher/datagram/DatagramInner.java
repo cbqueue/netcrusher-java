@@ -252,8 +252,8 @@ class DatagramInner {
                     incoming.release(entry);
                 }
 
-                meters.sentBytes.update(sent);
-                meters.sentPackets.increment();
+                meters.getSentBytes().update(sent);
+                meters.getSentPackets().increment();
 
                 if (LOGGER.isTraceEnabled()) {
                     LOGGER.trace("Send {} bytes to client <{}>", sent, entry.getAddress());
@@ -286,8 +286,8 @@ class DatagramInner {
                 LOGGER.trace("Received {} bytes from inner <{}>", read, address);
             }
 
-            meters.readBytes.update(read);
-            meters.readPackets.increment();
+            meters.getReadBytes().update(read);
+            meters.getReadPackets().increment();
 
             DatagramOuter outer = requestOuter(address);
             outer.enqueue(bb);
@@ -361,7 +361,7 @@ class DatagramInner {
 
             outers.put(address, outer);
 
-            meters.clientTotalCount.incrementAndGet();
+            meters.getClientTotalCount().incrementAndGet();
 
             crusher.notifyOuterCreated(outer);
         }
@@ -415,50 +415,50 @@ class DatagramInner {
     }
 
     RateMeters getByteMeters() {
-        return new RateMeters(meters.readBytes, meters.sentBytes);
+        return new RateMeters(meters.getReadBytes(), meters.getSentBytes());
     }
 
     RateMeters getPacketMeters() {
-        return new RateMeters(meters.readPackets, meters.sentPackets);
+        return new RateMeters(meters.getReadPackets(), meters.getSentPackets());
     }
 
     int getClientTotalCount() {
-        return meters.clientTotalCount.get();
+        return meters.getClientTotalCount().get();
     }
 
-    private static final class State extends BitState {
+    static final class State extends BitState {
 
-        private static final int OPEN = bit(0);
+        static final int OPEN = bit(0);
 
-        private static final int FROZEN = bit(1);
+        static final int FROZEN = bit(1);
 
-        private static final int CLOSED = bit(2);
+        static final int CLOSED = bit(2);
 
         private boolean sendThrottled;
 
-        private State(int state) {
+        State(int state) {
             super(state);
             this.sendThrottled = false;
         }
 
-        private boolean isWritable() {
+        boolean isWritable() {
             return is(OPEN) && !sendThrottled;
         }
 
-        private boolean isReadable() {
+        boolean isReadable() {
             return is(OPEN);
         }
 
-        private boolean isSendThrottled() {
+        boolean isSendThrottled() {
             return sendThrottled;
         }
 
-        private void setSendThrottled(boolean sendThrottled) {
+        void setSendThrottled(boolean sendThrottled) {
             this.sendThrottled = sendThrottled;
         }
     }
 
-    private static final class Meters {
+    static final class Meters {
 
         private final RateMeterImpl sentBytes;
 
@@ -470,12 +470,32 @@ class DatagramInner {
 
         private final AtomicInteger clientTotalCount;
 
-        private Meters() {
+        Meters() {
             this.sentBytes = new RateMeterImpl();
             this.readBytes = new RateMeterImpl();
             this.sentPackets = new RateMeterImpl();
             this.readPackets = new RateMeterImpl();
             this.clientTotalCount = new AtomicInteger(0);
+        }
+
+        public RateMeterImpl getSentBytes() {
+            return sentBytes;
+        }
+
+        public RateMeterImpl getReadBytes() {
+            return readBytes;
+        }
+
+        public RateMeterImpl getSentPackets() {
+            return sentPackets;
+        }
+
+        public RateMeterImpl getReadPackets() {
+            return readPackets;
+        }
+
+        public AtomicInteger getClientTotalCount() {
+            return clientTotalCount;
         }
     }
 

@@ -14,7 +14,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.PriorityQueue;
 import java.util.Queue;
-import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
@@ -26,13 +25,13 @@ public class NioSelector {
     private static final long THREAD_TERMINATION_TIMEOUT_MS = 5000;
 
     private static final Comparator<NioSelectorScheduledOp> SCHEDULE_COMPARATOR =
-        (o1, o2) -> Long.compare(o1.getScheduledNs(), o2.getScheduledNs());
+        Comparator.comparingLong(NioSelectorScheduledOp::getScheduledNs);
 
     private final Thread thread;
 
     private final Selector selector;
 
-    private final Queue<NioSelectorPostOp> postOperationQueue;
+    private final Queue<NioSelectorPostOp<?>> postOperationQueue;
 
     private final Queue<NioSelectorScheduledOp> scheduledOperationQueue;
 
@@ -103,9 +102,7 @@ public class NioSelector {
     }
 
     // Internal method
-    public SelectionKey register(SelectableChannel channel,
-                                 int options, SelectionKeyCallback callback)
-    {
+    public SelectionKey register(SelectableChannel channel, int options, SelectionKeyCallback callback) {
         return execute(() -> channel.register(selector, options, callback));
     }
 
@@ -149,7 +146,7 @@ public class NioSelector {
             throw new IllegalStateException("Tick value should be set on selector");
         }
         if (!Thread.currentThread().equals(thread)) {
-            throw new IllegalStateException("Scheduling only should be made fron selector's thread");
+            throw new IllegalStateException("Scheduling only should be made from selector's thread");
         }
 
         long nowNs = System.nanoTime();
@@ -174,15 +171,13 @@ public class NioSelector {
 
             // execute all selection key callbacks
             if (count > 0) {
-                Set<SelectionKey> keys = selector.selectedKeys();
-
-                Iterator<SelectionKey> keyIterator = keys.iterator();
+                Iterator<SelectionKey> keyIterator = selector.selectedKeys().iterator();
                 while (keyIterator.hasNext()) {
                     SelectionKey selectionKey = keyIterator.next();
 
                     if (selectionKey.isValid()) {
-                        SelectionKeyCallback callback = (SelectionKeyCallback) selectionKey.attachment();
                         try {
+                            SelectionKeyCallback callback = (SelectionKeyCallback) selectionKey.attachment();
                             callback.execute(selectionKey);
                         } catch (Exception e) {
                             LOGGER.error("Error while executing selection key callback", e);
@@ -219,7 +214,7 @@ public class NioSelector {
 
     private void runPostOperations() {
         while (true) {
-            NioSelectorPostOp postOperation = postOperationQueue.poll();
+            NioSelectorPostOp<?> postOperation = postOperationQueue.poll();
             if (postOperation != null) {
                 postOperation.run();
             } else {

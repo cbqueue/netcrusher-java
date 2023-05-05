@@ -46,7 +46,7 @@ public class BindBeforeConnectTcpTest {
             .withBindAddress(HOSTNAME, PORT_CRUSHER)
             .withConnectAddress(HOSTNAME, PORT_SERVER)
             .withBindBeforeConnectAddress(HOSTNAME, 0)
-            .withCreationListener((addr) -> LOGGER.info("Client is created <{}>", addr))
+            .withCreationListener(addr -> LOGGER.info("Client is created <{}>", addr))
             .withDeletionListener((addr, byteMeters) -> LOGGER.info("Client is deleted <{}>", addr))
             .buildAndOpen();
     }

@@ -163,7 +163,7 @@ class DatagramOuter {
         });
     }
 
-    private void callback(SelectionKey selectionKey) throws IOException {
+    private void callback(SelectionKey selectionKey) {
         if (selectionKey.isWritable()) {
             try {
                 handleWritableEvent(false);
@@ -243,8 +243,8 @@ class DatagramOuter {
                     incoming.release(entry);
                 }
 
-                meters.sentBytes.update(sent);
-                meters.sentPackets.increment();
+                meters.getSentBytes().update(sent);
+                meters.getSentPackets().increment();
 
                 if (LOGGER.isTraceEnabled()) {
                     LOGGER.trace("Send {} bytes to client <{}>", sent, entry.getAddress());
@@ -283,10 +283,10 @@ class DatagramOuter {
                 LOGGER.trace("Read {} bytes from outer for <{}>", read, clientAddress);
             }
 
-            meters.readBytes.update(read);
-            meters.readPackets.increment();
+            meters.getReadBytes().update(read);
+            meters.getReadPackets().increment();
 
-            final boolean passed = filter(bb, filters.incomingPassFilter, filters.incomingTransferFilter);
+            final boolean passed = filter(bb, filters.getIncomingPassFilter(), filters.getIncomingTransferFilter());
             if (passed) {
                 inner.enqueue(clientAddress, bb);
             }
@@ -308,9 +308,9 @@ class DatagramOuter {
     }
 
     void enqueue(ByteBuffer bbToCopy) throws IOException {
-        final boolean passed = filter(bbToCopy, filters.outgoingPassFilter, filters.outgoingTransferFilter);
+        final boolean passed = filter(bbToCopy, filters.getOutgoingPassFilter(), filters.getOutgoingTransferFilter());
         if (passed) {
-            final Throttler throttler = filters.outgoingThrottler;
+            final Throttler throttler = filters.getOutgoingThrottler();
 
             final long delayNs;
             if (throttler != null) {
@@ -379,46 +379,46 @@ class DatagramOuter {
     }
 
     RateMeters getByteMeters() {
-        return new RateMeters(meters.readBytes, meters.sentBytes);
+        return new RateMeters(meters.getReadBytes(), meters.getSentBytes());
     }
 
     RateMeters getPacketMeters() {
-        return new RateMeters(meters.readPackets, meters.sentPackets);
+        return new RateMeters(meters.getReadPackets(), meters.getSentPackets());
     }
 
-    private static final class State extends BitState {
+    static final class State extends BitState {
 
-        private static final int OPEN = bit(0);
+        static final int OPEN = bit(0);
 
-        private static final int FROZEN = bit(1);
+        static final int FROZEN = bit(1);
 
-        private static final int CLOSED = bit(2);
+        static final int CLOSED = bit(2);
 
         private boolean sendThrottled;
 
-        private State(int state) {
+        State(int state) {
             super(state);
             this.sendThrottled = false;
         }
 
-        private boolean isWritable() {
+        boolean isWritable() {
             return is(OPEN) && !sendThrottled;
         }
 
-        private boolean isReadable() {
+        boolean isReadable() {
             return is(OPEN);
         }
 
-        private boolean isSendThrottled() {
+        boolean isSendThrottled() {
             return sendThrottled;
         }
 
-        private void setSendThrottled(boolean sendThrottled) {
+        void setSendThrottled(boolean sendThrottled) {
             this.sendThrottled = sendThrottled;
         }
     }
 
-    private static final class Meters {
+    static final class Meters {
 
         private final RateMeterImpl sentBytes;
 
@@ -428,15 +428,32 @@ class DatagramOuter {
 
         private final RateMeterImpl readPackets;
 
-        private Meters() {
+        Meters() {
             this.readBytes = new RateMeterImpl();
             this.sentBytes = new RateMeterImpl();
             this.readPackets = new RateMeterImpl();
             this.sentPackets = new RateMeterImpl();
         }
+
+        public RateMeterImpl getSentBytes() {
+            return sentBytes;
+        }
+
+        public RateMeterImpl getReadBytes() {
+            return readBytes;
+        }
+
+        public RateMeterImpl getSentPackets() {
+            return sentPackets;
+        }
+
+        public RateMeterImpl getReadPackets() {
+            return readPackets;
+        }
+
     }
 
-    private static final class Filters {
+    static final class Filters {
 
         private final TransformFilter outgoingTransferFilter;
 
@@ -448,7 +465,7 @@ class DatagramOuter {
 
         private final Throttler outgoingThrottler;
 
-        private Filters(DatagramFilters filters, InetSocketAddress clientAddress) {
+        Filters(DatagramFilters filters, InetSocketAddress clientAddress) {
             if (filters.getOutgoingTransformFilterFactory() != null) {
                 this.outgoingTransferFilter = filters.getOutgoingTransformFilterFactory().allocate(clientAddress);
             } else {
@@ -478,6 +495,26 @@ class DatagramOuter {
             } else {
                 this.outgoingThrottler = null;
             }
+        }
+
+        public TransformFilter getOutgoingTransferFilter() {
+            return outgoingTransferFilter;
+        }
+
+        public TransformFilter getIncomingTransferFilter() {
+            return incomingTransferFilter;
+        }
+
+        public PassFilter getOutgoingPassFilter() {
+            return outgoingPassFilter;
+        }
+
+        public PassFilter getIncomingPassFilter() {
+            return incomingPassFilter;
+        }
+
+        public Throttler getOutgoingThrottler() {
+            return outgoingThrottler;
         }
 
     }

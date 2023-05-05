@@ -48,11 +48,11 @@ public class BulkTcpTest {
             .withReactor(reactor)
             .withBindAddress(HOSTNAME, PORT_CRUSHER)
             .withConnectAddress(HOSTNAME, PORT_SERVER)
-            .withIncomingTransformFilterFactory((addr) -> TransformFilter.NOOP)
-            .withOutgoingTransformFilterFactory((addr) -> TransformFilter.NOOP)
-            .withIncomingThrottlerFactory((addr) -> Throttler.NOOP)
-            .withOutgoingThrottlerFactory((addr) -> Throttler.NOOP)
-            .withCreationListener((addr) -> LOGGER.info("Client is created <{}>", addr))
+            .withIncomingTransformFilterFactory(addr -> TransformFilter.NOOP)
+            .withOutgoingTransformFilterFactory(addr -> TransformFilter.NOOP)
+            .withIncomingThrottlerFactory(addr -> Throttler.NOOP)
+            .withOutgoingThrottlerFactory(addr -> Throttler.NOOP)
+            .withCreationListener(addr -> LOGGER.info("Client is created <{}>", addr))
             .withDeletionListener((addr, byteMeters) -> LOGGER.info("Client is deleted <{}>", addr))
             .buildAndOpen();
     }

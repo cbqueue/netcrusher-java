@@ -22,7 +22,7 @@ public class NioScheduler {
     private volatile boolean open;
 
     NioScheduler() {
-        this.scheduledExecutorService = Executors.newSingleThreadScheduledExecutor((r) -> {
+        this.scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(r -> {
             Thread thread = new Thread(r);
             thread.setName("NetCrusher scheduled executor");
             thread.setDaemon(false);

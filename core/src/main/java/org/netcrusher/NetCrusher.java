@@ -10,14 +10,14 @@ public interface NetCrusher extends NetFreezer, Closeable {
 
     /**
      * Opens the crusher and it's sockets
-     * @throws IllegalStateException Throwed if the crusher is already open
+     * @throws IllegalStateException Thrown if the crusher is already open
      * @see NetCrusher#close()
      * @see NetCrusher#isOpen()
      */
     void open();
 
     /**
-     * Closes the crusher and it's sockets. After the crusher is closed it can be reopen again
+     * Closes the crusher and it's sockets. After the crusher is closed it can be reopened again
      * @see NetCrusher#open()
      * @see NetCrusher#isOpen()
      */
@@ -26,7 +26,7 @@ public interface NetCrusher extends NetFreezer, Closeable {
 
     /**
      * Closes and then reopens the crusher again
-     * @throws IllegalStateException Throwed if the crusher is not open
+     * @throws IllegalStateException Thrown if the crusher is not open
      * @see NetCrusher#open()
      * @see NetCrusher#close()
      */
@@ -42,12 +42,12 @@ public interface NetCrusher extends NetFreezer, Closeable {
 
     /**
      * Get the address which is used to bind on
-     * @return Local bind addresss
+     * @return Local bind address
      */
     InetSocketAddress getBindAddress();
 
     /**
-     * Get the adress which is used to connect to
+     * Get the address which is used to connect to
      * @return Remote connect address
      */
     InetSocketAddress getConnectAddress();

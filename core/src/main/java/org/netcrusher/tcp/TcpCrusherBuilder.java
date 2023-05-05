@@ -131,7 +131,7 @@ public final class TcpCrusherBuilder {
     }
 
     /**
-     * Set whether or not both sockets would use SO_KEEPALIVE feature
+     * Set whether both sockets would use SO_KEEPALIVE feature
      * @param keepAlive SO_KEEPALIVE flag value
      * @see StandardSocketOptions#SO_KEEPALIVE
      * @return This builder instance to chain with other methods
@@ -142,7 +142,7 @@ public final class TcpCrusherBuilder {
     }
 
     /**
-     * Set whether or not both sockets would use TCP_NODELAY feature
+     * Set whether both sockets would use TCP_NODELAY feature
      * @param tcpNoDelay TCP_NODELAY flag value
      * @see StandardSocketOptions#TCP_NODELAY
      * @return This builder instance to chain with other methods

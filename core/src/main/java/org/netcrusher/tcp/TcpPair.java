@@ -138,13 +138,13 @@ class TcpPair implements NetFreezer {
 
     private static final class State extends BitState {
 
-        private static final int OPEN = bit(0);
+        static final int OPEN = bit(0);
 
-        private static final int FROZEN = bit(1);
+        static final int FROZEN = bit(1);
 
-        private static final int CLOSED = bit(2);
+        static final int CLOSED = bit(2);
 
-        private State(int state) {
+        State(int state) {
             super(state);
         }
     }

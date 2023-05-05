@@ -41,41 +41,41 @@ public class CycleTcpTest {
     }
 
     @Test(expected = NetCrusherException.class)
-    public void doubleOpen() throws Exception {
+    public void doubleOpen() {
         crusher.open();
     }
 
     @Test
-    public void doubleClose() throws Exception {
+    public void doubleClose() {
         crusher.close();
         crusher.close();
     }
 
     @Test(expected = NetCrusherException.class)
-    public void doubleFreeze() throws Exception {
+    public void doubleFreeze() {
         crusher.freeze();
         crusher.freeze();
     }
 
     @Test(expected = NetCrusherException.class)
-    public void doubleUnreeze() throws Exception {
+    public void doubleUnfreeze() {
         crusher.freeze();
         crusher.unfreeze();
         crusher.unfreeze();
     }
 
     @Test(expected = NetCrusherException.class)
-    public void unreezeWithoutFreeze() throws Exception {
+    public void unfreezeWithoutFreeze() {
         crusher.unfreeze();
     }
 
     @Test
-    public void reopen() throws Exception {
+    public void reopen() {
         crusher.reopen();
     }
 
     @Test(expected = NetCrusherException.class)
-    public void reopenAfterClose() throws Exception {
+    public void reopenAfterClose() {
         crusher.close();
         crusher.reopen();
     }

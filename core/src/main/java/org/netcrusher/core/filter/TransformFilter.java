@@ -3,7 +3,7 @@ package org.netcrusher.core.filter;
 import java.nio.ByteBuffer;
 
 /**
- * <p>Filter for tranferred data. Filtering is made in reactor's thread so all blocking I/O should be made in other
+ * <p>Filter for transferred data. Filtering is made in reactor's thread so all blocking I/O should be made in other
  * thread with the copy of the input buffer.</p>
  *
  * <p>Filter that filters nothing:</p>
@@ -34,7 +34,7 @@ import java.nio.ByteBuffer;
 @FunctionalInterface
 public interface TransformFilter {
 
-    TransformFilter NOOP = (bb) -> { };
+    TransformFilter NOOP = bb -> { };
 
     /**
      * <p>Callback that filters input byte buffer and return output byte buffer</p>

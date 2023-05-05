@@ -108,7 +108,7 @@ public abstract class AbstractTcpSocatTest extends AbstractLinuxTest {
         Assert.assertEquals(0, reflectorResult.getExitCode());
 
         Assert.assertEquals(2, processorResult.getOutput().stream()
-            .filter((s) -> s.startsWith(String.format("%d bytes", bytes)))
+            .filter(s -> s.startsWith(String.format("%d bytes", bytes)))
             .count()
         );
 
@@ -155,11 +155,11 @@ public abstract class AbstractTcpSocatTest extends AbstractLinuxTest {
         Assert.assertEquals(0, consumerResult.getExitCode());
 
         Assert.assertEquals(1, producerResult.getOutput().stream()
-            .filter((s) -> s.startsWith(String.format("%d bytes", bytes)))
+            .filter(s -> s.startsWith(String.format("%d bytes", bytes)))
             .count()
         );
         Assert.assertEquals(1, consumerResult.getOutput().stream()
-            .filter((s) -> s.startsWith(String.format("%d bytes", bytes)))
+            .filter(s -> s.startsWith(String.format("%d bytes", bytes)))
             .count()
         );
 

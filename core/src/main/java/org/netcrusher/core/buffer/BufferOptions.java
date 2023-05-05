@@ -53,7 +53,7 @@ public class BufferOptions implements Serializable {
     }
 
     public void checkTcpSocket(Socket socket) throws SocketException {
-        final long sizeTotal = count * size;
+        final long sizeTotal = (long) count * size;
 
         if (sizeTotal < socket.getReceiveBufferSize()) {
             LOGGER.warn("Total buffer size {} is less than TCP socket SO_RCVBUF buffer size {}. Increase buffer size",
@@ -67,7 +67,7 @@ public class BufferOptions implements Serializable {
     }
 
     public void checkDatagramSocket(DatagramSocket socket) throws SocketException {
-        final long sizeTotal = count * size;
+        final long sizeTotal = (long) count * size;
 
         if (sizeTotal < socket.getReceiveBufferSize()) {
             LOGGER.warn("Total buffer size {} is less than UDP socket SO_RCVBUF buffer size {}. Increase buffer size",

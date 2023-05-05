@@ -184,7 +184,7 @@ public class DatagramCrusher implements NetCrusher {
 
                 return true;
             } else {
-                throw new IllegalStateException("DatagramСrusher is not open on freeze");
+                throw new IllegalStateException("DatagramCrusher is not open on freeze");
             }
         });
     }
@@ -332,15 +332,15 @@ public class DatagramCrusher implements NetCrusher {
         });
     }
 
-    private static final class State extends BitState {
+    static final class State extends BitState {
 
-        private static final int OPEN = bit(0);
+        static final int OPEN = bit(0);
 
-        private static final int FROZEN = bit(1);
+        static final int FROZEN = bit(1);
 
-        private static final int CLOSED = bit(2);
+        static final int CLOSED = bit(2);
 
-        private State(int state) {
+        State(int state) {
             super(state);
         }
     }

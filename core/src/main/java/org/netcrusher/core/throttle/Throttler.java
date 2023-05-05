@@ -6,7 +6,7 @@ import java.nio.ByteBuffer;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Throttling abstraction. As most throttlers have some state an usual throttler instance should
+ * Throttling abstraction. As most throttlers have some state, a throttler instance should
  * not be shared across crushers.
  */
 @FunctionalInterface
@@ -14,7 +14,7 @@ public interface Throttler {
 
     long NO_DELAY_NS = -TimeUnit.MILLISECONDS.toNanos(1);
 
-    Throttler NOOP = (bb) -> NO_DELAY_NS;
+    Throttler NOOP = bb -> NO_DELAY_NS;
 
     /**
      * <p>Calculate delay for the buffer. Return 0 if the buffer should be sent immediately.</p>

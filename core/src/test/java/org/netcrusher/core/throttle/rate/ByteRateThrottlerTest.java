@@ -30,7 +30,7 @@ public class ByteRateThrottlerTest {
     }
 
     @Test
-    public void testBulk() throws Exception {
+    public void testBulk() {
         long totalSent = 0;
         long totalElapsedNs = 0;
 
@@ -56,7 +56,7 @@ public class ByteRateThrottlerTest {
     }
 
     @Test
-    public void testSmallRate() throws Exception {
+    public void testSmallRate() {
         // 1 byte per 100 seconds
         ByteRateThrottler lazyThrottler = new ByteRateThrottler(1, 100, TimeUnit.SECONDS,
             AbstractRateThrottler.AUTO_FACTOR, mockChronometer);

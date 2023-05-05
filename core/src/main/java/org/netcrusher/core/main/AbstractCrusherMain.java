@@ -62,6 +62,7 @@ public abstract class AbstractCrusherMain<T extends NetCrusher> {
         return run(bindAddress, connectAddress, tickMs);
     }
 
+    @SuppressWarnings("PMD.CloseResource")
     protected int run(InetSocketAddress bindAddress, InetSocketAddress connectAddress, long tickMs) {
         final NioReactor reactor;
         try {
@@ -220,9 +221,10 @@ public abstract class AbstractCrusherMain<T extends NetCrusher> {
     }
 
     protected void status(T crusher) {
-        LOGGER.info("{} crusher for <{}>-<{}>", new Object[] {
-            crusher.getClass().getSimpleName(), crusher.getBindAddress(), crusher.getConnectAddress()
-        });
+        LOGGER.info(
+            "{} crusher for <{}>-<{}>", crusher.getClass().getSimpleName(),
+            crusher.getBindAddress(), crusher.getConnectAddress()
+        );
 
         if (crusher.isOpen()) {
             LOGGER.info("Crusher is open");

@@ -98,7 +98,7 @@ public final class NioUtils {
 
         final String host = text.substring(0, index);
 
-        final String portStr = text.substring(index + 1, text.length());
+        final String portStr = text.substring(index + 1);
         final int port;
         try {
             port = Integer.parseInt(portStr);

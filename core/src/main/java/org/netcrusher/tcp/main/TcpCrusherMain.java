@@ -29,7 +29,7 @@ public class TcpCrusherMain extends AbstractCrusherMain<TcpCrusher> {
             .withBindAddress(bindAddress)
             .withConnectAddress(connectAddress);
 
-        builder.withCreationListener((address) ->
+        builder.withCreationListener(address ->
             LOGGER.info("Client for <{}> is created", address)
         );
 
@@ -48,16 +48,16 @@ public class TcpCrusherMain extends AbstractCrusherMain<TcpCrusher> {
         withBoolProperty("crusher.socket.keepalive", builder::withKeepAlive);
         withIntProperty("crusher.socket.linger", builder::withLingerMs);
 
-        withStrProperty("crusher.logger", (loggerName) -> {
-            builder.withOutgoingTransformFilterFactory((addr) ->
+        withStrProperty("crusher.logger", loggerName -> {
+            builder.withOutgoingTransformFilterFactory(addr ->
                 new LoggingFilter(addr, loggerName + ".outgoing", LoggingFilter.Level.INFO));
-            builder.withIncomingTransformFilterFactory((addr) ->
+            builder.withIncomingTransformFilterFactory(addr ->
                 new LoggingFilter(addr, loggerName + ".incoming", LoggingFilter.Level.INFO));
         });
 
-        withIntProperty("crusher.throttler.bytes", (bytePerSec) -> {
-            builder.withOutgoingThrottlerFactory((addr) -> new ByteRateThrottler(bytePerSec, 1, TimeUnit.SECONDS));
-            builder.withIncomingThrottlerFactory((addr) -> new ByteRateThrottler(bytePerSec, 1, TimeUnit.SECONDS));
+        withIntProperty("crusher.throttler.bytes", bytePerSec -> {
+            builder.withOutgoingThrottlerFactory(addr -> new ByteRateThrottler(bytePerSec, 1, TimeUnit.SECONDS));
+            builder.withIncomingThrottlerFactory(addr -> new ByteRateThrottler(bytePerSec, 1, TimeUnit.SECONDS));
         });
 
         return builder.buildAndOpen();

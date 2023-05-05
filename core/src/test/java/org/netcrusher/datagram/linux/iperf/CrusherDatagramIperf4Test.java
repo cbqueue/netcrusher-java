@@ -30,10 +30,9 @@ public class CrusherDatagramIperf4Test extends AbstractDatagramIperfTest {
             .withReactor(reactor)
             .withBindAddress(ADDR_LOOPBACK4, PORT_CRUSHER)
             .withConnectAddress(ADDR_LOOPBACK4, PORT_IPERF)
-            .withCreationListener((addr) ->
-                LOGGER.info("Client is created <{}>", addr))
-            .withDeletionListener((addr, byteMeters, packetMeters) ->
-                LOGGER.info("Client is deleted <{}>", addr))
+            .withBufferSize(65535)
+            .withCreationListener(addr -> LOGGER.info("Client is created <{}>", addr))
+            .withDeletionListener((addr, byteMeters, packetMeters) -> LOGGER.info("Client is deleted <{}>", addr))
             .buildAndOpen();
 
         // for iperf3 TCP control channel on the same port
@@ -41,10 +40,8 @@ public class CrusherDatagramIperf4Test extends AbstractDatagramIperfTest {
             .withReactor(reactor)
             .withBindAddress(ADDR_LOOPBACK4, PORT_CRUSHER)
             .withConnectAddress(ADDR_LOOPBACK4, PORT_IPERF)
-            .withCreationListener((addr) ->
-                LOGGER.info("Client is created <{}>", addr))
-            .withDeletionListener((addr, byteMeters) ->
-                LOGGER.info("Client is deleted <{}>", addr))
+            .withCreationListener(addr -> LOGGER.info("Client is created <{}>", addr))
+            .withDeletionListener((addr, byteMeters) -> LOGGER.info("Client is deleted <{}>", addr))
             .buildAndOpen();
     }
 

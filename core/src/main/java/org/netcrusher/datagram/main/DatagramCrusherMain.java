@@ -29,7 +29,7 @@ public class DatagramCrusherMain extends AbstractCrusherMain<DatagramCrusher> {
             .withBindAddress(bindAddress)
             .withConnectAddress(connectAddress);
 
-        builder.withCreationListener((address) ->
+        builder.withCreationListener(address ->
             LOGGER.info("Client for <{}> is created", address)
         );
 
@@ -44,19 +44,19 @@ public class DatagramCrusherMain extends AbstractCrusherMain<DatagramCrusher> {
         withIntProperty("crusher.socket.rcvbuf.size", builder::withRcvBufferSize);
         withIntProperty("crusher.socket.sndbuf.size", builder::withSndBufferSize);
 
-        withStrProperty("crusher.logger", (loggerName) -> {
-            builder.withOutgoingTransformFilterFactory((addr) ->
+        withStrProperty("crusher.logger", loggerName -> {
+            builder.withOutgoingTransformFilterFactory(addr ->
                 new LoggingFilter(addr, loggerName + ".outgoing", LoggingFilter.Level.INFO));
-            builder.withIncomingTransformFilterFactory((addr) ->
+            builder.withIncomingTransformFilterFactory(addr ->
                 new LoggingFilter(addr, loggerName + ".incoming", LoggingFilter.Level.INFO));
         });
 
-        withIntProperty("crusher.throttler.packets", (packetPerSec) ->
-            builder.withOutgoingThrottlerFactory((addr) -> new PacketRateThrottler(packetPerSec, 1, TimeUnit.SECONDS))
+        withIntProperty("crusher.throttler.packets", packetPerSec ->
+            builder.withOutgoingThrottlerFactory(addr -> new PacketRateThrottler(packetPerSec, 1, TimeUnit.SECONDS))
         );
 
-        withIntProperty("crusher.throttler.bytes", (bytePerSec) ->
-            builder.withOutgoingThrottlerFactory((addr) -> new ByteRateThrottler(bytePerSec, 1, TimeUnit.SECONDS))
+        withIntProperty("crusher.throttler.bytes", bytePerSec ->
+            builder.withOutgoingThrottlerFactory(addr -> new ByteRateThrottler(bytePerSec, 1, TimeUnit.SECONDS))
         );
 
         return builder.buildAndOpen();

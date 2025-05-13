@@ -3,10 +3,10 @@ package org.netcrusher;
 import com.jolbox.bonecp.BoneCP;
 import com.jolbox.bonecp.BoneCPConfig;
 import org.hsqldb.Server;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.netcrusher.core.reactor.NioReactor;
 import org.netcrusher.tcp.TcpCrusher;
 import org.netcrusher.tcp.TcpCrusherBuilder;
@@ -33,7 +33,7 @@ public class DbTest {
 
     private TcpCrusher crusher;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         reactor = new NioReactor();
 
@@ -56,6 +56,10 @@ public class DbTest {
 
         Class.forName("org.hsqldb.jdbc.JDBCDriver");
 
+        connectionPool = new BoneCP(getBoneCPConfig());
+    }
+
+    private static BoneCPConfig getBoneCPConfig() {
         BoneCPConfig config = new BoneCPConfig();
         config.setJdbcUrl(String.format("jdbc:hsqldb:hsql://127.0.0.1:%d/testdb", CRUSHER_PORT));
         config.setUsername("sa");
@@ -75,12 +79,11 @@ public class DbTest {
         config.setMaxConnectionsPerPartition(1);
         config.setLazyInit(true);
         config.setDetectUnclosedStatements(true);
-
-        connectionPool = new BoneCP(config);
+        return config;
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @AfterEach
+    public void tearDown() {
         connectionPool.close();
         hsqlServer.stop();
         crusher.close();
@@ -93,7 +96,7 @@ public class DbTest {
         Connection connection = connectionPool.getConnection();
 
         Thread.sleep(1000);
-        Assert.assertEquals(1, crusher.getClientAddresses().size());
+        Assertions.assertEquals(1, crusher.getClientAddresses().size());
 
         // query some data
         connection.createStatement().executeQuery(SQL_CHECK);
@@ -101,7 +104,7 @@ public class DbTest {
         // check the pool has only one connection
         try {
             connectionPool.getConnection();
-            Assert.fail("Exception is expected");
+            Assertions.fail("Exception is expected");
         } catch (SQLException e) {
             // exception is expected;
         }
@@ -112,7 +115,7 @@ public class DbTest {
         // the query should fail
         try {
             connection.createStatement().executeQuery(SQL_CHECK);
-            Assert.fail("Exception is expected");
+            Assertions.fail("Exception is expected");
         } catch (SQLTransientConnectionException e) {
             // exception is expected;
         }
@@ -126,7 +129,7 @@ public class DbTest {
 
         // get a new fresh one from the pool
         connection = connectionPool.getConnection();
-        Assert.assertEquals(1, crusher.getClientAddresses().size());
+        Assertions.assertEquals(1, crusher.getClientAddresses().size());
 
         // query some data
         connection.createStatement().executeQuery(SQL_CHECK);
@@ -141,7 +144,7 @@ public class DbTest {
         Connection connection = connectionPool.getConnection();
 
         Thread.sleep(1000);
-        Assert.assertEquals(1, crusher.getClientAddresses().size());
+        Assertions.assertEquals(1, crusher.getClientAddresses().size());
 
         // query some data
         connection.createStatement().executeQuery(SQL_CHECK);

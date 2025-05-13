@@ -1,14 +1,15 @@
 package org.netcrusher.tcp;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.netcrusher.NetCrusherException;
 import org.netcrusher.core.reactor.NioReactor;
 
 import java.net.InetSocketAddress;
 
-public class CycleTcpTest {
+class CycleTcpTest {
 
     private static final InetSocketAddress CRUSHER_ADDRESS = new InetSocketAddress("127.0.0.1", 10284);
 
@@ -18,8 +19,8 @@ public class CycleTcpTest {
 
     private TcpCrusher crusher;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         reactor = new NioReactor();
 
         crusher = TcpCrusherBuilder.builder()
@@ -29,8 +30,8 @@ public class CycleTcpTest {
             .buildAndOpen();
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @AfterEach
+    void tearDown() {
         if (crusher != null) {
             crusher.close();
         }
@@ -40,43 +41,43 @@ public class CycleTcpTest {
         }
     }
 
-    @Test(expected = NetCrusherException.class)
-    public void doubleOpen() {
-        crusher.open();
+    @Test
+    void doubleOpen() {
+        Assertions.assertThrows(NetCrusherException.class, () -> crusher.open());
     }
 
     @Test
-    public void doubleClose() {
+    void doubleClose() {
         crusher.close();
-        crusher.close();
-    }
-
-    @Test(expected = NetCrusherException.class)
-    public void doubleFreeze() {
-        crusher.freeze();
-        crusher.freeze();
-    }
-
-    @Test(expected = NetCrusherException.class)
-    public void doubleUnfreeze() {
-        crusher.freeze();
-        crusher.unfreeze();
-        crusher.unfreeze();
-    }
-
-    @Test(expected = NetCrusherException.class)
-    public void unfreezeWithoutFreeze() {
-        crusher.unfreeze();
+        Assertions.assertDoesNotThrow(() -> crusher.close());
     }
 
     @Test
-    public void reopen() {
-        crusher.reopen();
+    void doubleFreeze() {
+        crusher.freeze();
+        Assertions.assertThrows(NetCrusherException.class, () -> crusher.freeze());
     }
 
-    @Test(expected = NetCrusherException.class)
-    public void reopenAfterClose() {
+    @Test
+    void doubleUnfreeze() {
+        crusher.freeze();
+        crusher.unfreeze();
+        Assertions.assertThrows(NetCrusherException.class, () -> crusher.unfreeze());
+    }
+
+    @Test
+    void unfreezeWithoutFreeze() {
+        Assertions.assertThrows(NetCrusherException.class, () -> crusher.unfreeze());
+    }
+
+    @Test
+    void reopen() {
+        Assertions.assertDoesNotThrow(() -> crusher.reopen());
+    }
+
+    @Test
+    void reopenAfterClose() {
         crusher.close();
-        crusher.reopen();
+        Assertions.assertThrows(NetCrusherException.class, () -> crusher.reopen());
     }
 }

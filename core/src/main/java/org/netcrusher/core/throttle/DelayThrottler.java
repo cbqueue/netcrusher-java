@@ -1,6 +1,7 @@
 package org.netcrusher.core.throttle;
 
 import java.nio.ByteBuffer;
+import java.security.SecureRandom;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -33,7 +34,7 @@ public class DelayThrottler implements Throttler {
     public DelayThrottler(long constantDelay, long jitterDelay, TimeUnit delayTimeUnit) {
         this.constantDelayNs = delayTimeUnit.toNanos(constantDelay);
         this.jitterDelayNs = delayTimeUnit.toNanos(jitterDelay);
-        this.random = new Random();
+        this.random = new SecureRandom();
     }
 
     @Override

@@ -1,7 +1,7 @@
 package org.netcrusher.datagram.linux.socat;
 
-import org.junit.Assert;
-import org.netcrusher.test.AbstractLinuxTest;
+import org.junit.jupiter.api.Assertions;
+import org.netcrusher.test.AbstractTestLinux;
 import org.netcrusher.test.process.ProcessResult;
 import org.netcrusher.test.process.ProcessWrapper;
 import org.slf4j.Logger;
@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
-public abstract class AbstractDatagramSocatTest extends AbstractLinuxTest {
+public abstract class AbstractDatagramSocatTestLinux extends AbstractTestLinux {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractDatagramSocatTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractDatagramSocatTestLinux.class);
 
     protected static final int DEFAULT_BYTES = 8 * 1024 * 1024;
 
@@ -100,10 +100,10 @@ public abstract class AbstractDatagramSocatTest extends AbstractLinuxTest {
         output(LOGGER, "Processor", processorResult.getOutputText());
         output(LOGGER, "Reflector", reflectorResult.getOutputText());
 
-        Assert.assertEquals(0, processorResult.getExitCode());
-        Assert.assertEquals(0, reflectorResult.getExitCode());
+        Assertions.assertEquals(0, processorResult.getExitCode());
+        Assertions.assertEquals(0, reflectorResult.getExitCode());
 
-        Assert.assertEquals(2, processorResult.getOutput().stream()
+        Assertions.assertEquals(2, processorResult.getOutput().stream()
             .filter(s -> s.startsWith(String.format("%d bytes", bytes)))
             .count()
         );
@@ -111,8 +111,8 @@ public abstract class AbstractDatagramSocatTest extends AbstractLinuxTest {
         List<String> hashes = extractMd5(processorResult.getOutput())
             .collect(Collectors.toList());
 
-        Assert.assertEquals(2, hashes.size());
-        Assert.assertEquals(hashes.get(0), hashes.get(1));
+        Assertions.assertEquals(2, hashes.size());
+        Assertions.assertEquals(hashes.get(0), hashes.get(1));
 
         return processorResult;
     }
@@ -145,14 +145,14 @@ public abstract class AbstractDatagramSocatTest extends AbstractLinuxTest {
         output(LOGGER, "Producer", producerResult.getOutputText());
         output(LOGGER, "Consumer", consumerResult.getOutputText());
 
-        Assert.assertEquals(0, producerResult.getExitCode());
-        Assert.assertEquals(0, consumerResult.getExitCode());
+        Assertions.assertEquals(0, producerResult.getExitCode());
+        Assertions.assertEquals(0, consumerResult.getExitCode());
 
-        Assert.assertEquals(1, producerResult.getOutput().stream()
+        Assertions.assertEquals(1, producerResult.getOutput().stream()
             .filter(s -> s.startsWith(String.format("%d bytes", bytes)))
             .count()
         );
-        Assert.assertEquals(1, consumerResult.getOutput().stream()
+        Assertions.assertEquals(1, consumerResult.getOutput().stream()
             .filter(s -> s.startsWith(String.format("%d bytes", bytes)))
             .count()
         );
@@ -164,7 +164,7 @@ public abstract class AbstractDatagramSocatTest extends AbstractLinuxTest {
             .findFirst()
             .orElse("no-consumer-hash");
 
-        Assert.assertEquals(producerHash, consumerHash);
+        Assertions.assertEquals(producerHash, consumerHash);
 
         return consumerResult;
     }

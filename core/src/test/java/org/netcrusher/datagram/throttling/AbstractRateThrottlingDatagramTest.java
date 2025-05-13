@@ -1,9 +1,9 @@
-package org.netcrusher.datagram.thottling;
+package org.netcrusher.datagram.throttling;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.netcrusher.core.nio.NioUtils;
 import org.netcrusher.core.reactor.NioReactor;
 import org.netcrusher.datagram.DatagramCrusher;
@@ -14,7 +14,7 @@ import org.netcrusher.datagram.bulk.DatagramBulkResult;
 import java.net.InetSocketAddress;
 import java.util.concurrent.CyclicBarrier;
 
-public abstract class AbstractRateThottlingDatagramTest {
+public abstract class AbstractRateThrottlingDatagramTest {
 
     private static final int CLIENT_PORT = 10182;
 
@@ -36,23 +36,23 @@ public abstract class AbstractRateThottlingDatagramTest {
 
     private DatagramCrusher crusher;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         reactor = new NioReactor(5);
 
         crusher = createCrusher(reactor, HOSTNAME, CRUSHER_PORT, REFLECTOR_PORT);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         if (crusher != null) {
             crusher.close();
-            Assert.assertFalse(crusher.isOpen());
+            Assertions.assertFalse(crusher.isOpen());
         }
 
         if (reactor != null) {
             reactor.close();
-            Assert.assertFalse(reactor.isOpen());
+            Assertions.assertFalse(reactor.isOpen());
         }
     }
 

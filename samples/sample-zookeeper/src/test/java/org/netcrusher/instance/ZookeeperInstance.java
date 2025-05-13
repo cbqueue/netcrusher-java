@@ -106,7 +106,7 @@ public class ZookeeperInstance implements Closeable {
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         LOGGER.info("Zookeeper #{} is closing", instance);
 
         peer.shutdown();

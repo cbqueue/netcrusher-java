@@ -145,7 +145,7 @@ class TcpChannel {
             LOGGER.debug("EOF on transfer on {}", name);
             closeEOF();
         } catch (ClosedChannelException e) {
-            LOGGER.debug("Channel closed on {}", name);
+            LOGGER.debug("Channel closed on read {}", name);
             closeLocal();
         } catch (Exception e) {
             LOGGER.error("Exception on {}", name, e);

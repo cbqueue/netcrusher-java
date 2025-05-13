@@ -1,9 +1,9 @@
 package org.netcrusher.datagram;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.netcrusher.core.filter.InverseFilter;
 import org.netcrusher.core.filter.PassFilter;
 import org.netcrusher.core.filter.TransformFilter;
@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 import java.net.InetSocketAddress;
 import java.util.concurrent.CyclicBarrier;
 
-public class BulkDatagramTest {
+class BulkDatagramTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BulkDatagramTest.class);
 
@@ -42,8 +42,8 @@ public class BulkDatagramTest {
 
     private DatagramCrusher crusher;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         reactor = new NioReactor();
 
         crusher = DatagramCrusherBuilder.builder()
@@ -63,28 +63,28 @@ public class BulkDatagramTest {
             .buildAndOpen();
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @AfterEach
+    void tearDown() {
         if (crusher != null) {
             crusher.close();
-            Assert.assertFalse(crusher.isOpen());
+            Assertions.assertFalse(crusher.isOpen());
         }
 
         if (reactor != null) {
             reactor.close();
-            Assert.assertFalse(reactor.isOpen());
+            Assertions.assertFalse(reactor.isOpen());
         }
     }
 
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         crusher.freeze();
-        Assert.assertTrue(crusher.isFrozen());
-        Assert.assertTrue(crusher.isOpen());
+        Assertions.assertTrue(crusher.isFrozen());
+        Assertions.assertTrue(crusher.isOpen());
 
         crusher.unfreeze();
-        Assert.assertFalse(crusher.isFrozen());
-        Assert.assertTrue(crusher.isOpen());
+        Assertions.assertFalse(crusher.isFrozen());
+        Assertions.assertTrue(crusher.isOpen());
 
         CyclicBarrier barrier = new CyclicBarrier(3);
 
@@ -109,27 +109,27 @@ public class BulkDatagramTest {
 
             reflector.awaitReflectorResult(READ_WAIT_MS).getDigest();
 
-            Assert.assertEquals(1, crusher.getClientAddresses().size());
+            Assertions.assertEquals(1, crusher.getClientAddresses().size());
             InetSocketAddress clientAddress = crusher.getClientAddresses().iterator().next();
-            Assert.assertNotNull(clientAddress);
+            Assertions.assertNotNull(clientAddress);
 
             RateMeters innerByteMeters = crusher.getInnerByteMeters();
-            Assert.assertTrue(innerByteMeters.getReadMeter().getTotalCount() > 0);
-            Assert.assertTrue(innerByteMeters.getSentMeter().getTotalCount() > 0);
+            Assertions.assertTrue(innerByteMeters.getReadMeter().getTotalCount() > 0);
+            Assertions.assertTrue(innerByteMeters.getSentMeter().getTotalCount() > 0);
 
             RateMeters outerByteMeters = crusher.getClientByteMeters(clientAddress);
-            Assert.assertTrue(outerByteMeters.getReadMeter().getTotalCount() > 0);
-            Assert.assertTrue(outerByteMeters.getSentMeter().getTotalCount() > 0);
+            Assertions.assertTrue(outerByteMeters.getReadMeter().getTotalCount() > 0);
+            Assertions.assertTrue(outerByteMeters.getSentMeter().getTotalCount() > 0);
 
             RateMeters innerPacketMeters = crusher.getInnerPacketMeters();
-            Assert.assertEquals(COUNT, innerPacketMeters.getReadMeter().getTotalCount());
-            Assert.assertEquals(COUNT, innerPacketMeters.getSentMeter().getTotalCount());
+            Assertions.assertEquals(COUNT, innerPacketMeters.getReadMeter().getTotalCount());
+            Assertions.assertEquals(COUNT, innerPacketMeters.getSentMeter().getTotalCount());
 
             RateMeters outerPacketMeters = crusher.getClientPacketMeters(clientAddress);
-            Assert.assertEquals(COUNT, outerPacketMeters.getReadMeter().getTotalCount());
-            Assert.assertEquals(COUNT, outerPacketMeters.getSentMeter().getTotalCount());
+            Assertions.assertEquals(COUNT, outerPacketMeters.getReadMeter().getTotalCount());
+            Assertions.assertEquals(COUNT, outerPacketMeters.getSentMeter().getTotalCount());
 
-            Assert.assertArrayEquals(producerDigest, consumerDigest);
+            Assertions.assertArrayEquals(producerDigest, consumerDigest);
         } finally {
             NioUtils.close(client);
             NioUtils.close(reflector);

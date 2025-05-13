@@ -1,15 +1,15 @@
 package org.netcrusher.core.throttle.rate;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.netcrusher.core.chronometer.MockChronometer;
 
 import java.nio.ByteBuffer;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-public class PacketRateThrottlerTest {
+class PacketRateThrottlerTest {
 
     private static final long RATE_PER_SEC = 10;
 
@@ -19,8 +19,8 @@ public class PacketRateThrottlerTest {
 
     private PacketRateThrottler throttler;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() {
         this.stubBuffer = ByteBuffer.allocate(10000);
 
         this.mockChronometer = new MockChronometer();
@@ -30,7 +30,7 @@ public class PacketRateThrottlerTest {
     }
 
     @Test
-    public void testBulk() {
+    void testBulk() {
         long totalSent = 0;
         long totalElapsedNs = 0;
 
@@ -49,11 +49,11 @@ public class PacketRateThrottlerTest {
         }
 
         double ratePerSec = 1.0 * TimeUnit.SECONDS.toNanos(1) * totalSent / totalElapsedNs;
-        Assert.assertEquals(RATE_PER_SEC, ratePerSec, 0.01 * RATE_PER_SEC);
+        Assertions.assertEquals(RATE_PER_SEC, ratePerSec, 0.01 * RATE_PER_SEC);
     }
 
     @Test
-    public void testSmallRate() {
+    void testSmallRate() {
         // 1 packet per 100 seconds
         PacketRateThrottler lazyThrottler = new PacketRateThrottler(1, 100, TimeUnit.SECONDS,
             AbstractRateThrottler.AUTO_FACTOR, mockChronometer);
@@ -61,6 +61,6 @@ public class PacketRateThrottlerTest {
         mockChronometer.add(1, TimeUnit.SECONDS);
 
         long delayNs = lazyThrottler.calculateDelayNs(stubBuffer);
-        Assert.assertEquals(TimeUnit.SECONDS.toNanos(99), delayNs);
+        Assertions.assertEquals(TimeUnit.SECONDS.toNanos(99), delayNs);
     }
 }

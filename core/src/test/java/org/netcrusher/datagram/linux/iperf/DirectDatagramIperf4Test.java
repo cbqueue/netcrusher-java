@@ -1,11 +1,12 @@
 package org.netcrusher.datagram.linux.iperf;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-public class DirectDatagramIperf4Test extends AbstractDatagramIperfTest {
+class DirectDatagramIperf4Test extends AbstractDatagramIperfTestLinux {
 
     @Test
-    public void test() throws Exception {
-        loop(IPERF_SERVER, IPERF4_CLIENT_DIRECT);
+    void test() {
+        Assertions.assertDoesNotThrow(() -> loop(IPERF_SERVER, IPERF4_CLIENT_DIRECT));
     }
 }

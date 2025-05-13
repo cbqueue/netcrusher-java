@@ -1,13 +1,13 @@
 package org.netcrusher.tcp.bulk;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.net.InetSocketAddress;
 
-public class TcpBulkTest {
+class TcpBulkTest {
 
     private static final int PORT_SERVER = 10082;
 
@@ -21,38 +21,38 @@ public class TcpBulkTest {
 
     private TcpBulkServer server;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         server = new TcpBulkServer(new InetSocketAddress(HOSTNAME, PORT_SERVER), COUNT);
         server.open();
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @AfterEach
+    void tearDown() throws Exception {
         if (server != null) {
             server.close();
         }
     }
 
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         final InetSocketAddress serverAddress = new InetSocketAddress(HOSTNAME, PORT_SERVER);
 
         try (TcpBulkClient client1 = TcpBulkClient.forAddress("EXT", serverAddress, COUNT)) {
             final byte[] producer1Digest = client1.awaitProducerResult(SEND_WAIT_MS).getDigest();
 
-            Assert.assertEquals(1, server.getClients().size());
+            Assertions.assertEquals(1, server.getClients().size());
             try (TcpBulkClient client2 = server.getClients().iterator().next()) {
                 final byte[] producer2Digest = client2.awaitProducerResult(SEND_WAIT_MS).getDigest();
 
                 final byte[] consumer1Digest = client1.awaitConsumerResult(READ_WAIT_MS).getDigest();
                 final byte[] consumer2Digest = client2.awaitConsumerResult(READ_WAIT_MS).getDigest();
 
-                Assert.assertNotNull(producer1Digest);
-                Assert.assertNotNull(producer2Digest);
+                Assertions.assertNotNull(producer1Digest);
+                Assertions.assertNotNull(producer2Digest);
 
-                Assert.assertArrayEquals(producer1Digest, consumer2Digest);
-                Assert.assertArrayEquals(producer2Digest, consumer1Digest);
+                Assertions.assertArrayEquals(producer1Digest, consumer2Digest);
+                Assertions.assertArrayEquals(producer2Digest, consumer1Digest);
             }
         }
     }

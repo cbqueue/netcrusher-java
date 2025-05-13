@@ -7,14 +7,14 @@ import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
-import org.junit.*;
+import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 
-@Ignore
+@Disabled
 public class ZookeeperInstanceTest {
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ZookeeperInstanceTest.class);
@@ -31,11 +31,11 @@ public class ZookeeperInstanceTest {
 
     private String connection;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         System.setProperty("zookeeper.jmx.log4j.disable", "true");
 
-        Assert.assertFalse(WORK_FOLDER.exists());
+        Assertions.assertFalse(WORK_FOLDER.exists());
         FileUtils.forceMkdir(WORK_FOLDER);
 
         instance1 = new ZookeeperInstance(WORK_FOLDER, false, 1);
@@ -54,7 +54,7 @@ public class ZookeeperInstanceTest {
         LOGGER.info("==========================================================================================");
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         LOGGER.info("==========================================================================================");
         LOGGER.info("Shutdowning...");
@@ -74,36 +74,31 @@ public class ZookeeperInstanceTest {
 
         byte[] data2 = read(connection, "/my/path");
 
-        Assert.assertArrayEquals(data1, data2);
+        Assertions.assertArrayEquals(data1, data2);
     }
 
     private void write(String connection, String path, byte[] data) throws Exception {
         RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);
         CuratorFramework client = CuratorFrameworkFactory.newClient(connection, retryPolicy);
 
-        client.start();
-        try {
-            client.create()
-                    .creatingParentContainersIfNeeded()
-                    .forPath(path, data);
-        } finally {
-            LOGGER.info("Closing client");
-            client.close();
-        }
+	    try (client) {
+		    client.start();
+		    client.create().creatingParentContainersIfNeeded().forPath(path, data);
+	    } finally {
+		    LOGGER.info("Closing client");
+	    }
     }
 
     private byte[] read(String connection, String path) throws Exception {
         RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);
         CuratorFramework client = CuratorFrameworkFactory.newClient(connection, retryPolicy);
 
-        client.start();
-        try {
-            return client.getData()
-                    .forPath(path);
-        } finally {
-            LOGGER.info("Closing client");
-            client.close();
-        }
+	    try (client) {
+		    client.start();
+		    return client.getData().forPath(path);
+	    } finally {
+		    LOGGER.info("Closing client");
+	    }
     }
 
 }

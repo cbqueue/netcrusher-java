@@ -74,7 +74,7 @@ DatagramCrusher crusher = DatagramCrusherBuilder.builder()
 // ... some actions
 
 // check data is sent
-Assert.assertTrue(crusher.getInner().getReadDatagramMeter().getTotal() > 0);
+Assertions.assertTrue(crusher.getInner().getReadDatagramMeter().getTotal() > 0);
 
 // closing
 crusher.close();

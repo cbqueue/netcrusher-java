@@ -1,13 +1,13 @@
 package org.netcrusher.datagram.bulk;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.netcrusher.core.nio.NioUtils;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.CyclicBarrier;
 
-public class DatagramBulkReflectorTest {
+class DatagramBulkReflectorTest {
 
     private static final int CLIENT_PORT = 10084;
 
@@ -22,7 +22,7 @@ public class DatagramBulkReflectorTest {
     private static final long READ_WAIT_MS = 10_000;
 
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         CyclicBarrier barrier = new CyclicBarrier(3);
 
         DatagramBulkClient client = new DatagramBulkClient("CLIENT",
@@ -45,8 +45,8 @@ public class DatagramBulkReflectorTest {
                 final byte[] consumerDigest = client.awaitConsumerResult(READ_WAIT_MS).getDigest();
                 final byte[] reflectorDigest = reflector.awaitReflectorResult(READ_WAIT_MS).getDigest();
 
-                Assert.assertArrayEquals(producerDigest, consumerDigest);
-                Assert.assertArrayEquals(producerDigest, reflectorDigest);
+                Assertions.assertArrayEquals(producerDigest, consumerDigest);
+                Assertions.assertArrayEquals(producerDigest, reflectorDigest);
             } finally {
                 NioUtils.close(client);
             }

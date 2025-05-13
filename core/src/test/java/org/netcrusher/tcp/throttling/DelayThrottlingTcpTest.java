@@ -1,9 +1,9 @@
 package org.netcrusher.tcp.throttling;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.netcrusher.core.reactor.NioReactor;
 import org.netcrusher.core.throttle.DelayThrottler;
 import org.netcrusher.tcp.TcpCrusher;
@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 
-public class DelayThrottlingTcpTest {
+class DelayThrottlingTcpTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DelayThrottlingTcpTest.class);
 
@@ -38,8 +38,8 @@ public class DelayThrottlingTcpTest {
 
     private TcpBulkServer server;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         server = new TcpBulkServer(new InetSocketAddress(HOSTNAME, PORT_SERVER), COUNT);
         server.open();
 
@@ -56,16 +56,16 @@ public class DelayThrottlingTcpTest {
             .buildAndOpen();
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @AfterEach
+    void tearDown() throws Exception {
         if (crusher != null) {
             crusher.close();
-            Assert.assertFalse(crusher.isOpen());
+            Assertions.assertFalse(crusher.isOpen());
         }
 
         if (reactor != null) {
             reactor.close();
-            Assert.assertFalse(reactor.isOpen());
+            Assertions.assertFalse(reactor.isOpen());
         }
 
         if (server != null) {
@@ -74,21 +74,21 @@ public class DelayThrottlingTcpTest {
     }
 
     @Test
-    public void testDelay() throws Exception {
+    void testDelay() throws Exception {
         final InetSocketAddress serverAddress = new InetSocketAddress(HOSTNAME, PORT_CRUSHER);
 
         try (TcpBulkClient client1 = TcpBulkClient.forAddress("EXT", serverAddress, COUNT)) {
             final byte[] producer1Digest = client1.awaitProducerResult(SEND_WAIT_MS).getDigest();
 
-            Assert.assertEquals(1, server.getClients().size());
+            Assertions.assertEquals(1, server.getClients().size());
             try (TcpBulkClient client2 = server.getClients().iterator().next()) {
                 final byte[] producer2Digest = client2.awaitProducerResult(SEND_WAIT_MS).getDigest();
 
                 final byte[] consumer1Digest = client1.awaitConsumerResult(READ_WAIT_MS).getDigest();
                 final byte[] consumer2Digest = client2.awaitConsumerResult(READ_WAIT_MS).getDigest();
 
-                Assert.assertArrayEquals(producer1Digest, consumer2Digest);
-                Assert.assertArrayEquals(producer2Digest, consumer1Digest);
+                Assertions.assertArrayEquals(producer1Digest, consumer2Digest);
+                Assertions.assertArrayEquals(producer2Digest, consumer1Digest);
             }
         }
     }

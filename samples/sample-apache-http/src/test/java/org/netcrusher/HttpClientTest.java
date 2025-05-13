@@ -21,10 +21,10 @@ import org.apache.http.impl.conn.ManagedHttpClientConnectionFactory;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.impl.conn.SystemDefaultDnsResolver;
 import org.apache.http.util.EntityUtils;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.netcrusher.core.reactor.NioReactor;
 import org.netcrusher.tcp.TcpCrusher;
 import org.netcrusher.tcp.TcpCrusherBuilder;
@@ -53,7 +53,7 @@ public class HttpClientTest {
 
     private TcpCrusher crusher;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         reactor = new NioReactor();
 
@@ -87,7 +87,7 @@ public class HttpClientTest {
         http = HttpClients.createMinimal(connectionManager);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         if (http != null) {
             http.close();
@@ -107,7 +107,7 @@ public class HttpClientTest {
         HttpUriRequest request = composeRequest();
 
         try (CloseableHttpResponse response = http.execute(request)) {
-            Assert.assertEquals(HttpStatus.SC_OK, response.getStatusLine().getStatusCode());
+            Assertions.assertEquals(HttpStatus.SC_OK, response.getStatusLine().getStatusCode());
 
             HttpEntity entity = response.getEntity();
             EntityUtils.consume(entity);
@@ -122,7 +122,7 @@ public class HttpClientTest {
 
         try {
             http.execute(request);
-            Assert.fail("Exception is expected");
+            Assertions.fail("Exception is expected");
         } catch (HttpHostConnectException e) {
             LOGGER.debug("Exception dump", e);
         }
@@ -136,7 +136,7 @@ public class HttpClientTest {
 
         try {
             http.execute(request);
-            Assert.fail("Exception is expected");
+            Assertions.fail("Exception is expected");
         } catch (SocketTimeoutException e) {
             LOGGER.debug("Exception dump", e);
         }

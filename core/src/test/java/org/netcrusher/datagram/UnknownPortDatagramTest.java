@@ -1,8 +1,9 @@
 package org.netcrusher.datagram;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.netcrusher.core.nio.NioUtils;
 import org.netcrusher.core.reactor.NioReactor;
 
@@ -10,7 +11,7 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 
-public class UnknownPortDatagramTest {
+class UnknownPortDatagramTest {
 
     private static final int PORT_CRUSHER = 10283;
 
@@ -22,8 +23,8 @@ public class UnknownPortDatagramTest {
 
     private DatagramCrusher crusher;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         reactor = new NioReactor();
 
         crusher = DatagramCrusherBuilder.builder()
@@ -33,8 +34,8 @@ public class UnknownPortDatagramTest {
             .buildAndOpen();
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @AfterEach
+    void tearDown() {
         if (crusher != null) {
             crusher.close();
         }
@@ -45,7 +46,7 @@ public class UnknownPortDatagramTest {
     }
 
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         DatagramChannel channel = DatagramChannel.open();
         channel.configureBlocking(true);
         channel.connect(new InetSocketAddress(HOSTNAME, PORT_CRUSHER));
@@ -55,7 +56,7 @@ public class UnknownPortDatagramTest {
             bb.limit(800);
             bb.position(0);
 
-            channel.write(bb);
+            Assertions.assertEquals(800, channel.write(bb));
 
             Thread.sleep(1001);
         } finally {

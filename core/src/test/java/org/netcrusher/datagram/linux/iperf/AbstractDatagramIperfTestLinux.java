@@ -1,7 +1,7 @@
 package org.netcrusher.datagram.linux.iperf;
 
-import org.junit.Assert;
-import org.netcrusher.test.AbstractLinuxTest;
+import org.junit.jupiter.api.Assertions;
+import org.netcrusher.test.AbstractTestLinux;
 import org.netcrusher.test.process.ProcessResult;
 import org.netcrusher.test.process.ProcessWrapper;
 import org.slf4j.Logger;
@@ -10,9 +10,9 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.concurrent.Future;
 
-public class AbstractDatagramIperfTest extends AbstractLinuxTest {
+public class AbstractDatagramIperfTestLinux extends AbstractTestLinux {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractDatagramIperfTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractDatagramIperfTestLinux.class);
 
     protected static final int PORT_IPERF = 50100;
 
@@ -49,7 +49,7 @@ public class AbstractDatagramIperfTest extends AbstractLinuxTest {
 
         output(LOGGER, "Client", clientResult.getOutputText());
 
-        Assert.assertEquals(0, clientResult.getExitCode());
+        Assertions.assertEquals(0, clientResult.getExitCode());
 
         return clientResult;
     }

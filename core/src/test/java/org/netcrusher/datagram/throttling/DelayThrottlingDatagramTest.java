@@ -1,9 +1,9 @@
-package org.netcrusher.datagram.thottling;
+package org.netcrusher.datagram.throttling;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.netcrusher.core.nio.NioUtils;
 import org.netcrusher.core.reactor.NioReactor;
 import org.netcrusher.core.throttle.DelayThrottler;
@@ -18,9 +18,9 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.TimeUnit;
 
-public class DelayThrottilingDatagramTest {
+class DelayThrottlingDatagramTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DelayThrottilingDatagramTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DelayThrottlingDatagramTest.class);
 
     private static final int CLIENT_PORT = 10182;
 
@@ -40,8 +40,8 @@ public class DelayThrottilingDatagramTest {
 
     private DatagramCrusher crusher;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         reactor = new NioReactor(10);
 
         crusher = DatagramCrusherBuilder.builder()
@@ -55,21 +55,21 @@ public class DelayThrottilingDatagramTest {
             .buildAndOpen();
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @AfterEach
+    void tearDown() {
         if (crusher != null) {
             crusher.close();
-            Assert.assertFalse(crusher.isOpen());
+            Assertions.assertFalse(crusher.isOpen());
         }
 
         if (reactor != null) {
             reactor.close();
-            Assert.assertFalse(reactor.isOpen());
+            Assertions.assertFalse(reactor.isOpen());
         }
     }
 
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         CyclicBarrier barrier = new CyclicBarrier(3);
 
         DatagramBulkClient client = new DatagramBulkClient("CLIENT_DELAYED",
@@ -92,8 +92,8 @@ public class DelayThrottilingDatagramTest {
                 final byte[] consumerDigest = client.awaitConsumerResult(READ_WAIT_MS).getDigest();
                 final byte[] reflectorDigest = reflector.awaitReflectorResult(READ_WAIT_MS).getDigest();
 
-                Assert.assertArrayEquals(producerDigest, consumerDigest);
-                Assert.assertArrayEquals(producerDigest, reflectorDigest);
+                Assertions.assertArrayEquals(producerDigest, consumerDigest);
+                Assertions.assertArrayEquals(producerDigest, reflectorDigest);
             } finally {
                 NioUtils.close(client);
             }

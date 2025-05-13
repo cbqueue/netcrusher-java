@@ -8,8 +8,8 @@ import java.nio.ByteBuffer;
 
 public class LoggingFilter implements TransformFilter {
 
+    private static final String LOG_FORMAT = "<{}> ({}): {}";
     private static final int BYTE_RANGE = 256;
-
     private static final int BYTE_MASK = 0x0000_0000_0000_00FF;
 
     private static final String[] HEX = createHexTable();
@@ -41,12 +41,12 @@ public class LoggingFilter implements TransformFilter {
                     final int limit = bb.arrayOffset() + bb.limit();
 
                     for (int i = offset; i < limit; i++) {
-                        int b = BYTE_MASK & (int) bytes[i];
+                        int b = BYTE_MASK & bytes[i];
                         sb.append(HEX[b]);
                     }
                 } else {
                     for (int i = bb.position(); i < bb.limit(); i++) {
-                        int b = BYTE_MASK & (int) bb.get(i);
+                        int b = BYTE_MASK & bb.get(i);
                         sb.append(HEX[b]);
                     }
                 }
@@ -78,19 +78,19 @@ public class LoggingFilter implements TransformFilter {
     private void log(InetSocketAddress clientAddress, int size, CharSequence data) {
         switch (level) {
             case TRACE:
-                logger.trace("<{}> ({}): {}", clientAddress, size, data);
+                logger.trace(LOG_FORMAT, clientAddress, size, data);
                 break;
             case DEBUG:
-                logger.debug("<{}> ({}): {}", clientAddress, size, data);
+                logger.debug(LOG_FORMAT, clientAddress, size, data);
                 break;
             case INFO:
-                logger.info("<{}> ({}): {}", clientAddress, size, data);
+                logger.info(LOG_FORMAT, clientAddress, size, data);
                 break;
             case WARN:
-                logger.warn("<{}> ({}): {}", clientAddress, size, data);
+                logger.warn(LOG_FORMAT, clientAddress, size, data);
                 break;
             case ERROR:
-                logger.error("<{}> ({}): {}", clientAddress, size, data);
+                logger.error(LOG_FORMAT, clientAddress, size, data);
                 break;
             default:
                 break;
@@ -108,16 +108,10 @@ public class LoggingFilter implements TransformFilter {
     }
 
     public enum Level {
-
         TRACE,
-
         DEBUG,
-
         INFO,
-
         WARN,
-
         ERROR
-
     }
 }

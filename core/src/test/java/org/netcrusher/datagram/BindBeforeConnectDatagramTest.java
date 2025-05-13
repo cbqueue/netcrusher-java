@@ -1,9 +1,9 @@
 package org.netcrusher.datagram;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.netcrusher.core.nio.NioUtils;
 import org.netcrusher.core.reactor.NioReactor;
 import org.netcrusher.datagram.bulk.DatagramBulkClient;
@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import java.net.InetSocketAddress;
 import java.util.concurrent.CyclicBarrier;
 
-public class BindBeforeConnectDatagramTest {
+class BindBeforeConnectDatagramTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BindBeforeConnectDatagramTest.class);
 
@@ -36,8 +36,8 @@ public class BindBeforeConnectDatagramTest {
 
     private DatagramCrusher crusher;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         reactor = new NioReactor();
 
         crusher = DatagramCrusherBuilder.builder()
@@ -50,21 +50,21 @@ public class BindBeforeConnectDatagramTest {
             .buildAndOpen();
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @AfterEach
+    void tearDown() {
         if (crusher != null) {
             crusher.close();
-            Assert.assertFalse(crusher.isOpen());
+            Assertions.assertFalse(crusher.isOpen());
         }
 
         if (reactor != null) {
             reactor.close();
-            Assert.assertFalse(reactor.isOpen());
+            Assertions.assertFalse(reactor.isOpen());
         }
     }
 
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         CyclicBarrier barrier = new CyclicBarrier(3);
 
         DatagramBulkClient client = new DatagramBulkClient("CLIENT",
@@ -88,7 +88,7 @@ public class BindBeforeConnectDatagramTest {
 
             reflector.awaitReflectorResult(READ_WAIT_MS).getDigest();
 
-            Assert.assertArrayEquals(producerDigest, consumerDigest);
+            Assertions.assertArrayEquals(producerDigest, consumerDigest);
         } finally {
             NioUtils.close(client);
             NioUtils.close(reflector);

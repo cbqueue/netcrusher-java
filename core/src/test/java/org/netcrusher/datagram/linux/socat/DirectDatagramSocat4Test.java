@@ -1,17 +1,18 @@
 package org.netcrusher.datagram.linux.socat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-public class DirectDatagramSocat4Test extends AbstractDatagramSocatTest {
+class DirectDatagramSocat4Test extends AbstractDatagramSocatTestLinux {
 
     @Test
-    public void loop() throws Exception {
-        loop(SOCAT4_PROCESSOR, SOCAT4_REFLECTOR_DIRECT, DEFAULT_BYTES, DEFAULT_THROUGHPUT_KBPERSEC);
+    void loop() {
+        Assertions.assertDoesNotThrow(() -> loop(SOCAT4_PROCESSOR, SOCAT4_REFLECTOR_DIRECT, DEFAULT_BYTES, DEFAULT_THROUGHPUT_KBPERSEC));
     }
 
     @Test
-    public void direct() throws Exception {
-        direct(SOCAT4_PRODUCER, SOCAT4_CONSUMER_DIRECT, DEFAULT_BYTES, DEFAULT_THROUGHPUT_KBPERSEC);
+    void direct() {
+        Assertions.assertDoesNotThrow(() -> direct(SOCAT4_PRODUCER, SOCAT4_CONSUMER_DIRECT, DEFAULT_BYTES, DEFAULT_THROUGHPUT_KBPERSEC));
     }
 
 }

@@ -1,9 +1,9 @@
 package org.netcrusher.datagram;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.netcrusher.core.meter.RateMeters;
 import org.netcrusher.core.nio.NioUtils;
 import org.netcrusher.core.reactor.NioReactor;
@@ -14,7 +14,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.util.concurrent.CyclicBarrier;
 
-public class EmptyDatagramTest {
+class EmptyDatagramTest {
 
     private static final InetSocketAddress CRUSHER_ADDRESS = new InetSocketAddress("127.0.0.1", 10284);
 
@@ -24,8 +24,8 @@ public class EmptyDatagramTest {
 
     private DatagramCrusher crusher;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         reactor = new NioReactor();
 
         crusher = DatagramCrusherBuilder.builder()
@@ -35,8 +35,8 @@ public class EmptyDatagramTest {
             .buildAndOpen();
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @AfterEach
+    void tearDown() {
         if (crusher != null) {
             crusher.close();
         }
@@ -47,7 +47,7 @@ public class EmptyDatagramTest {
     }
 
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         CyclicBarrier barrier = new CyclicBarrier(2);
 
         DatagramBulkReflector reflector = new DatagramBulkReflector("REFLECTOR", REFLECTOR_ADDRESS, 1, barrier);
@@ -66,27 +66,27 @@ public class EmptyDatagramTest {
             bb.clear();
             bb.flip();
             int sent = channel.send(bb, CRUSHER_ADDRESS);
-            Assert.assertEquals(0, sent);
+            Assertions.assertEquals(0, sent);
 
             // check
             Thread.sleep(500);
 
-            Assert.assertEquals(1, crusher.getClientTotalCount());
+            Assertions.assertEquals(1, crusher.getClientTotalCount());
 
             RateMeters innerByteMeters = crusher.getInnerByteMeters();
-            Assert.assertEquals(0, innerByteMeters.getReadMeter().getTotalCount());
-            Assert.assertEquals(0, innerByteMeters.getSentMeter().getTotalCount());
+            Assertions.assertEquals(0, innerByteMeters.getReadMeter().getTotalCount());
+            Assertions.assertEquals(0, innerByteMeters.getSentMeter().getTotalCount());
 
             RateMeters innerPacketMeters = crusher.getInnerPacketMeters();
-            Assert.assertEquals(1, innerPacketMeters.getReadMeter().getTotalCount());
-            Assert.assertEquals(1, innerPacketMeters.getSentMeter().getTotalCount());
+            Assertions.assertEquals(1, innerPacketMeters.getReadMeter().getTotalCount());
+            Assertions.assertEquals(1, innerPacketMeters.getSentMeter().getTotalCount());
 
             // read
             bb.clear();
             InetSocketAddress address = (InetSocketAddress) channel.receive(bb);
-            Assert.assertNotNull(address);
-            Assert.assertEquals(CRUSHER_ADDRESS, address);
-            Assert.assertEquals(0, bb.position());
+            Assertions.assertNotNull(address);
+            Assertions.assertEquals(CRUSHER_ADDRESS, address);
+            Assertions.assertEquals(0, bb.position());
         } finally {
             NioUtils.close(channel);
             NioUtils.close(reflector);
@@ -94,7 +94,7 @@ public class EmptyDatagramTest {
     }
 
     @Test
-    public void testBlockSockets() throws Exception {
+    void testBlockSockets() throws Exception {
         DatagramChannel channel1 = DatagramChannel.open();
         channel1.configureBlocking(true);
         // No empty datagram for connected socket
@@ -111,14 +111,14 @@ public class EmptyDatagramTest {
         try {
             bb.flip();
             int sent = channel1.send(bb, REFLECTOR_ADDRESS);
-            Assert.assertEquals(0, sent);
+            Assertions.assertEquals(0, sent);
 
             Thread.sleep(100);
 
             bb.clear();
             InetSocketAddress address = (InetSocketAddress) channel2.receive(bb);
-            Assert.assertNotNull(address);
-            Assert.assertEquals(0, bb.position());
+            Assertions.assertNotNull(address);
+            Assertions.assertEquals(0, bb.position());
         } finally {
             NioUtils.close(channel2);
             NioUtils.close(channel1);
@@ -126,7 +126,7 @@ public class EmptyDatagramTest {
     }
 
     @Test
-    public void testNoCrusher() throws Exception {
+    void testNoCrusher() throws Exception {
         CyclicBarrier barrier = new CyclicBarrier(2);
 
         DatagramBulkReflector reflector = new DatagramBulkReflector("REFLECTOR", REFLECTOR_ADDRESS, 1, barrier);
@@ -148,14 +148,14 @@ public class EmptyDatagramTest {
             bb.clear();
             bb.flip();
             int sent = channel.send(bb, REFLECTOR_ADDRESS);
-            Assert.assertEquals(0, sent);
+            Assertions.assertEquals(0, sent);
 
             // read
             bb.clear();
             InetSocketAddress address = (InetSocketAddress) channel.receive(bb);
-            Assert.assertNotNull(address);
-            Assert.assertEquals(REFLECTOR_ADDRESS, address);
-            Assert.assertEquals(0, bb.position());
+            Assertions.assertNotNull(address);
+            Assertions.assertEquals(REFLECTOR_ADDRESS, address);
+            Assertions.assertEquals(0, bb.position());
         } finally {
             NioUtils.close(channel);
             NioUtils.close(reflector);

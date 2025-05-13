@@ -55,7 +55,7 @@ public class ProcessWrapper {
 
             LOGGER.info("Process {} started: {}", process.hashCode(), builder.command());
 
-            this.future = new CompletableFuture<ProcessResult>() {
+            this.future = new CompletableFuture<>() {
                 @Override
                 public boolean cancel(boolean mayInterruptIfRunning) {
                     if (process.isAlive() && mayInterruptIfRunning) {

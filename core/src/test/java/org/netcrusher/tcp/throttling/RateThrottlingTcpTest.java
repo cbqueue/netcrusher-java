@@ -1,9 +1,9 @@
 package org.netcrusher.tcp.throttling;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.netcrusher.core.reactor.NioReactor;
 import org.netcrusher.core.throttle.rate.ByteRateThrottler;
 import org.netcrusher.tcp.TcpCrusher;
@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 
-public class RateThrottlingTcpTest {
+class RateThrottlingTcpTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RateThrottlingTcpTest.class);
 
@@ -45,8 +45,8 @@ public class RateThrottlingTcpTest {
 
     private TcpBulkServer server;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         server = new TcpBulkServer(new InetSocketAddress(HOSTNAME, PORT_SERVER), COUNT);
         server.open();
 
@@ -65,16 +65,16 @@ public class RateThrottlingTcpTest {
             .buildAndOpen();
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @AfterEach
+    void tearDown() throws Exception {
         if (crusher != null) {
             crusher.close();
-            Assert.assertFalse(crusher.isOpen());
+            Assertions.assertFalse(crusher.isOpen());
         }
 
         if (reactor != null) {
             reactor.close();
-            Assert.assertFalse(reactor.isOpen());
+            Assertions.assertFalse(reactor.isOpen());
         }
 
         if (server != null) {
@@ -83,29 +83,29 @@ public class RateThrottlingTcpTest {
     }
 
     @Test
-    public void testRate() throws Exception {
+    void testRate() throws Exception {
         final InetSocketAddress serverAddress = new InetSocketAddress(HOSTNAME, PORT_CRUSHER);
 
         try (TcpBulkClient client1 = TcpBulkClient.forAddress("EXT", serverAddress, COUNT)) {
             final TcpBulkResult producer1Result = client1.awaitProducerResult(SEND_WAIT_MS);
 
-            Assert.assertEquals(1, server.getClients().size());
+            Assertions.assertEquals(1, server.getClients().size());
             try (TcpBulkClient client2 = server.getClients().iterator().next()) {
                 final TcpBulkResult producer2Result = client2.awaitProducerResult(SEND_WAIT_MS);
 
                 final TcpBulkResult consumer1Result = client1.awaitConsumerResult(READ_WAIT_MS);
                 final TcpBulkResult consumer2Result = client2.awaitConsumerResult(READ_WAIT_MS);
 
-                Assert.assertArrayEquals(producer1Result.getDigest(), consumer2Result.getDigest());
-                Assert.assertArrayEquals(producer2Result.getDigest(), consumer1Result.getDigest());
+                Assertions.assertArrayEquals(producer1Result.getDigest(), consumer2Result.getDigest());
+                Assertions.assertArrayEquals(producer2Result.getDigest(), consumer1Result.getDigest());
 
                 double incomingRate = 1000.0 * consumer1Result.getBytes() / consumer1Result.getElapsedMs();
                 LOGGER.info("Incoming rate is {} bytes/sec", incomingRate);
-                Assert.assertEquals(INCOMING_BYTES_PER_SEC, incomingRate, INCOMING_BYTES_PER_SEC * RATE_PRECISION);
+                Assertions.assertEquals(INCOMING_BYTES_PER_SEC, incomingRate, INCOMING_BYTES_PER_SEC * RATE_PRECISION);
 
                 double outgoingRate = 1000.0 * consumer2Result.getBytes() / consumer2Result.getElapsedMs();
                 LOGGER.info("Outgoing rate is {} bytes/sec", outgoingRate);
-                Assert.assertEquals(OUTGOING_BYTES_PER_SEC, outgoingRate, OUTGOING_BYTES_PER_SEC * RATE_PRECISION);
+                Assertions.assertEquals(OUTGOING_BYTES_PER_SEC, outgoingRate, OUTGOING_BYTES_PER_SEC * RATE_PRECISION);
             }
         }
     }

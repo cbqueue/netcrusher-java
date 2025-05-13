@@ -1,9 +1,9 @@
 package org.netcrusher.tcp;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.netcrusher.core.reactor.NioReactor;
 
 import java.io.IOException;
@@ -11,7 +11,7 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 
-public class UnknownHostTcpTest {
+class UnknownHostTcpTest {
 
     private static final int PORT_CRUSHER = 10080;
 
@@ -25,8 +25,8 @@ public class UnknownHostTcpTest {
 
     private TcpCrusher crusher;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         reactor = new NioReactor();
 
         crusher = TcpCrusherBuilder.builder()
@@ -38,8 +38,8 @@ public class UnknownHostTcpTest {
             .buildAndOpen();
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @AfterEach
+    void tearDown() {
         if (crusher != null) {
             crusher.close();
         }
@@ -50,15 +50,15 @@ public class UnknownHostTcpTest {
     }
 
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         SocketChannel channel = SocketChannel.open();
-        channel.configureBlocking(true);
-        channel.connect(new InetSocketAddress(HOSTNAME_BIND, PORT_CRUSHER));
 
-        try {
-            Assert.assertEquals(0, crusher.getClientAddresses().size());
+        try (channel) {
+            channel.configureBlocking(true);
+            channel.connect(new InetSocketAddress(HOSTNAME_BIND, PORT_CRUSHER));
+            Assertions.assertEquals(0, crusher.getClientAddresses().size());
             Thread.sleep(3002);
-            Assert.assertEquals(0, crusher.getClientAddresses().size());
+            Assertions.assertEquals(0, crusher.getClientAddresses().size());
 
             ByteBuffer bb = ByteBuffer.allocate(100);
             bb.put((byte) 0x01);
@@ -66,12 +66,10 @@ public class UnknownHostTcpTest {
 
             try {
                 channel.write(bb);
-                Assert.fail("Exception is expected");
+                Assertions.fail("Exception is expected");
             } catch (IOException e) {
                 //
             }
-        } finally {
-            channel.close();
         }
     }
 }

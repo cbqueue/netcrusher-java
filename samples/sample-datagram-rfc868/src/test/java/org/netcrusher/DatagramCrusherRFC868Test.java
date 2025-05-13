@@ -1,9 +1,9 @@
 package org.netcrusher;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.netcrusher.core.filter.LoggingFilter;
 import org.netcrusher.core.meter.RateMeters;
 import org.netcrusher.core.reactor.NioReactor;
@@ -29,7 +29,7 @@ public class DatagramCrusherRFC868Test {
 
     private DatagramCrusher crusher;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         reactor = new NioReactor();
 
@@ -44,8 +44,8 @@ public class DatagramCrusherRFC868Test {
                 .buildAndOpen();
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @AfterEach
+    public void tearDown() {
         if (crusher != null) {
             crusher.close();
         }
@@ -59,18 +59,18 @@ public class DatagramCrusherRFC868Test {
     public void testRFC868() throws Exception {
         check();
 
-        Assert.assertEquals(1, crusher.getClientAddresses().size());
+        Assertions.assertEquals(1, crusher.getClientAddresses().size());
 
         InetSocketAddress clientAddress = crusher.getClientAddresses().iterator().next();
-        Assert.assertNotNull(clientAddress);
+        Assertions.assertNotNull(clientAddress);
 
         RateMeters packetMeters = crusher.getClientPacketMeters(clientAddress);
-        Assert.assertEquals(1, packetMeters.getSentMeter().getTotalCount());
-        Assert.assertEquals(1, packetMeters.getReadMeter().getTotalCount());
+        Assertions.assertEquals(1, packetMeters.getSentMeter().getTotalCount());
+        Assertions.assertEquals(1, packetMeters.getReadMeter().getTotalCount());
 
         RateMeters byteMeters = crusher.getClientByteMeters(clientAddress);
-        Assert.assertEquals(0, byteMeters.getSentMeter().getTotalCount());
-        Assert.assertEquals(4, byteMeters.getReadMeter().getTotalCount());
+        Assertions.assertEquals(0, byteMeters.getSentMeter().getTotalCount());
+        Assertions.assertEquals(4, byteMeters.getReadMeter().getTotalCount());
     }
 
     private void check() throws IOException {
@@ -92,7 +92,7 @@ public class DatagramCrusherRFC868Test {
             calendar.setTimeZone(TimeZone.getTimeZone("UTC"));
             long timeMs = calendar.getTimeInMillis() + seconds * 1000;
 
-            Assert.assertTrue(Math.abs(System.currentTimeMillis() - timeMs) < 5000);
+            Assertions.assertTrue(Math.abs(System.currentTimeMillis() - timeMs) < 5000);
         }
     }
 }

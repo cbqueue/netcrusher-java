@@ -96,12 +96,8 @@ public class DatagramCrusherMain extends AbstractCrusherMain<DatagramCrusher> {
             LOGGER.info("Inner statistics");
 
             RateMeters innerByteMeters = crusher.getInnerByteMeters();
-            LOGGER.info("\ttotal read bytes: {}", innerByteMeters.getReadMeter().getTotal());
-            LOGGER.info("\ttotal sent bytes: {}", innerByteMeters.getSentMeter().getTotal());
-
             RateMeters innerPacketMeters = crusher.getInnerPacketMeters();
-            LOGGER.info("\ttotal read packets: {}", innerPacketMeters.getReadMeter().getTotal());
-            LOGGER.info("\ttotal sent packets: {}", innerPacketMeters.getSentMeter().getTotal());
+            statusClientMeters(innerByteMeters, innerPacketMeters);
         }
     }
 
@@ -125,7 +121,7 @@ public class DatagramCrusherMain extends AbstractCrusherMain<DatagramCrusher> {
         LOGGER.info("\ttotal sent packets: {}", packetMeters.getSentMeter().getTotal());
     }
 
-    public static void main(String[] arguments) throws Exception {
+    public static void main(String[] arguments) {
         DatagramCrusherMain main = new DatagramCrusherMain();
         main.run(arguments);
     }

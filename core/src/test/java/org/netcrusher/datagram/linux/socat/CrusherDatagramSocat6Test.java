@@ -1,9 +1,9 @@
 package org.netcrusher.datagram.linux.socat;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.netcrusher.core.reactor.NioReactor;
 import org.netcrusher.datagram.DatagramCrusher;
 import org.netcrusher.datagram.DatagramCrusherBuilder;
@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.StandardProtocolFamily;
 
-public class CrusherDatagramSocat6Test extends AbstractDatagramSocatTest {
+class CrusherDatagramSocat6Test extends AbstractDatagramSocatTestLinux {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CrusherDatagramSocat6Test.class);
 
@@ -20,8 +20,8 @@ public class CrusherDatagramSocat6Test extends AbstractDatagramSocatTest {
 
     private DatagramCrusher crusher;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         reactor = new NioReactor();
 
         crusher = DatagramCrusherBuilder.builder()
@@ -34,47 +34,47 @@ public class CrusherDatagramSocat6Test extends AbstractDatagramSocatTest {
             .buildAndOpen();
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @AfterEach
+    void tearDown() {
         if (crusher != null) {
             crusher.close();
-            Assert.assertFalse(crusher.isOpen());
+            Assertions.assertFalse(crusher.isOpen());
         }
 
         if (reactor != null) {
             reactor.close();
-            Assert.assertFalse(reactor.isOpen());
+            Assertions.assertFalse(reactor.isOpen());
         }
     }
 
     @Test
-    public void loop() throws Exception {
-        loop(SOCAT6_PROCESSOR, SOCAT6_REFLECTOR_PROXIED, DEFAULT_BYTES, DEFAULT_THROUGHPUT_KBPERSEC);
+    void loop() {
+        Assertions.assertDoesNotThrow(() -> loop(SOCAT6_PROCESSOR, SOCAT6_REFLECTOR_PROXIED, DEFAULT_BYTES, DEFAULT_THROUGHPUT_KBPERSEC));
     }
 
     @Test
-    public void loopSlower() throws Exception {
-        loop(SOCAT6_PROCESSOR, SOCAT6_REFLECTOR_PROXIED, DEFAULT_BYTES / 10, DEFAULT_THROUGHPUT_KBPERSEC / 10);
+    void loopSlower() {
+        Assertions.assertDoesNotThrow(() -> loop(SOCAT6_PROCESSOR, SOCAT6_REFLECTOR_PROXIED, DEFAULT_BYTES / 10, DEFAULT_THROUGHPUT_KBPERSEC / 10));
     }
 
     @Test
-    public void loopSlowest() throws Exception {
-        loop(SOCAT6_PROCESSOR, SOCAT6_REFLECTOR_PROXIED, DEFAULT_BYTES / 100, DEFAULT_THROUGHPUT_KBPERSEC / 100);
+    void loopSlowest() {
+        Assertions.assertDoesNotThrow(() -> loop(SOCAT6_PROCESSOR, SOCAT6_REFLECTOR_PROXIED, DEFAULT_BYTES / 100, DEFAULT_THROUGHPUT_KBPERSEC / 100));
     }
 
     @Test
-    public void direct() throws Exception {
-        direct(SOCAT6_PRODUCER, SOCAT6_CONSUMER_PROXIED, DEFAULT_BYTES, DEFAULT_THROUGHPUT_KBPERSEC);
+    void direct() {
+        Assertions.assertDoesNotThrow(() -> direct(SOCAT6_PRODUCER, SOCAT6_CONSUMER_PROXIED, DEFAULT_BYTES, DEFAULT_THROUGHPUT_KBPERSEC));
     }
 
     @Test
-    public void directSlower() throws Exception {
-        direct(SOCAT6_PRODUCER, SOCAT6_CONSUMER_PROXIED, DEFAULT_BYTES / 10, DEFAULT_THROUGHPUT_KBPERSEC / 10);
+    void directSlower() {
+        Assertions.assertDoesNotThrow(() -> direct(SOCAT6_PRODUCER, SOCAT6_CONSUMER_PROXIED, DEFAULT_BYTES / 10, DEFAULT_THROUGHPUT_KBPERSEC / 10));
     }
 
     @Test
-    public void directSlowest() throws Exception {
-        direct(SOCAT6_PRODUCER, SOCAT6_CONSUMER_PROXIED, DEFAULT_BYTES / 100, DEFAULT_THROUGHPUT_KBPERSEC / 100);
+    void directSlowest() {
+        Assertions.assertDoesNotThrow(() -> direct(SOCAT6_PRODUCER, SOCAT6_CONSUMER_PROXIED, DEFAULT_BYTES / 100, DEFAULT_THROUGHPUT_KBPERSEC / 100));
     }
 
 }

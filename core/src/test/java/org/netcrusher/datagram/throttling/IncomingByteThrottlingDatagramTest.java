@@ -1,6 +1,6 @@
-package org.netcrusher.datagram.thottling;
+package org.netcrusher.datagram.throttling;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.netcrusher.core.reactor.NioReactor;
 import org.netcrusher.core.throttle.rate.ByteRateThrottler;
 import org.netcrusher.datagram.DatagramCrusher;
@@ -11,9 +11,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
 
-public class OutgoingByteThottlingDatagramTest extends AbstractRateThottlingDatagramTest {
+public class IncomingByteThrottlingDatagramTest extends AbstractRateThrottlingDatagramTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OutgoingByteThottlingDatagramTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IncomingByteThrottlingDatagramTest.class);
 
     private static final int BYTES_PER_SEC = 20_000;
 
@@ -23,8 +23,7 @@ public class OutgoingByteThottlingDatagramTest extends AbstractRateThottlingData
             .withReactor(reactor)
             .withBindAddress(host, bindPort)
             .withConnectAddress(host, connectPort)
-            .withOutgoingThrottlerFactory((addr) ->
-                new ByteRateThrottler(BYTES_PER_SEC, 1, TimeUnit.SECONDS))
+            .withIncomingGlobalThrottler(new ByteRateThrottler(BYTES_PER_SEC, 1, TimeUnit.SECONDS))
             .withCreationListener(addr -> LOGGER.info("Client is created <{}>", addr))
             .withDeletionListener((addr, byteMeters, packetMeters) -> LOGGER.info("Client is deleted <{}>", addr))
             .buildAndOpen();
@@ -40,8 +39,8 @@ public class OutgoingByteThottlingDatagramTest extends AbstractRateThottlingData
         double consumerRate = 1000.0 * consumerResult.getBytes() / consumerResult.getElapsedMs();
         LOGGER.info("Consumer rate is {} bytes/sec", consumerRate);
 
-        Assert.assertEquals(BYTES_PER_SEC, consumerRate, BYTES_PER_SEC * precisionAllowed);
-        Assert.assertArrayEquals(consumerResult.getDigest(), reflectorResult.getDigest());
+        Assertions.assertEquals(BYTES_PER_SEC, consumerRate, BYTES_PER_SEC * precisionAllowed);
+        Assertions.assertArrayEquals(producerResult.getDigest(), reflectorResult.getDigest());
     }
 
 }

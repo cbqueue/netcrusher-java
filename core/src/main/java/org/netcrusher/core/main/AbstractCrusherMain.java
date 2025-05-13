@@ -10,6 +10,8 @@ import java.net.InetSocketAddress;
 import java.nio.charset.Charset;
 import java.util.Scanner;
 import java.util.function.Consumer;
+import java.util.function.IntConsumer;
+import java.util.function.LongConsumer;
 
 @SuppressWarnings("PMD.SystemPrintln")
 public abstract class AbstractCrusherMain<T extends NetCrusher> {
@@ -123,20 +125,17 @@ public abstract class AbstractCrusherMain<T extends NetCrusher> {
 
     protected void repl(T crusher) {
         try {
-            try (Scanner scanner = new Scanner(System.in, PLATFORM_CHARSET.name())) {
+            try (Scanner scanner = new Scanner(System.in, PLATFORM_CHARSET)) {
                 while (true) {
                     System.out.printf("# enter the command in the next line (crusher is %s)%n",
                         crusher.isOpen() ? "OPEN" : "CLOSED");
 
                     String line = scanner.nextLine();
-                    if (line == null) {
-                        break;
-                    }
 
-                    if (line.isEmpty()) {
-                        LOGGER.warn("Command is empty");
-                    } else if (CMD_QUIT.equals(line)) {
+                    if (line == null || CMD_QUIT.equals(line)) {
                         break;
+                    } else if (line.isEmpty()) {
+                        LOGGER.warn("Command is empty");
                     } else {
                         try {
                             command(crusher, line);
@@ -296,7 +295,7 @@ public abstract class AbstractCrusherMain<T extends NetCrusher> {
     protected abstract T create(NioReactor reactor,
         InetSocketAddress bindAddress, InetSocketAddress connectAddress);
 
-    protected static void withLongProperty(String name, Consumer<Long> consumer) {
+    protected static void withLongProperty(String name, LongConsumer consumer) {
         final String text = System.getProperty(name);
         if (text != null && !text.isEmpty()) {
             try {
@@ -308,7 +307,7 @@ public abstract class AbstractCrusherMain<T extends NetCrusher> {
         }
     }
 
-    protected static void withIntProperty(String name, Consumer<Integer> consumer) {
+    protected static void withIntProperty(String name, IntConsumer consumer) {
         final String text = System.getProperty(name);
         if (text != null && !text.isEmpty()) {
             try {

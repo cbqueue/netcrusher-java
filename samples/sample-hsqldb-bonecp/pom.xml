@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.github.netcrusherorg</groupId>
+        <groupId>com.github.cbqueue</groupId>
         <artifactId>sample-parent</artifactId>
         <version>1.0</version>
         <relativePath>../pom.xml</relativePath>
@@ -14,9 +14,9 @@
     <packaging>jar</packaging>
 
     <properties>
-        <version.hsqldb>2.3.4</version.hsqldb>
+        <version.hsqldb>2.7.4</version.hsqldb>
         <version.bonecp>0.8.0.RELEASE</version.bonecp>
-        <version.derbydb>10.12.1.1</version.derbydb>
+        <version.derbydb>10.17.1.0</version.derbydb>
     </properties>
 
     <dependencies>

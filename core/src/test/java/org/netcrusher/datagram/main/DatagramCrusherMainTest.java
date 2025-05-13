@@ -1,15 +1,16 @@
 package org.netcrusher.datagram.main;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore
-public class DatagramCrusherMainTest {
+@Disabled
+class DatagramCrusherMainTest {
 
     @Test
-    public void test() throws Exception {
+    void test() {
         String[] arguments = { "127.0.0.1:12345", "google.com:80" };
 
-        DatagramCrusherMain.main(arguments);
+        Assertions.assertDoesNotThrow(() -> DatagramCrusherMain.main(arguments));
     }
 }

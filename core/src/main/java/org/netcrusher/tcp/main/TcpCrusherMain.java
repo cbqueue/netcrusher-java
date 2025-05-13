@@ -148,14 +148,14 @@ public class TcpCrusherMain extends AbstractCrusherMain<TcpCrusher> {
                 crusher.getAcceptorFreezer().unfreeze();
                 LOGGER.info("Acceptor is unfrozen");
             } else {
-                LOGGER.warn("Acceptor is already frozen");
+                LOGGER.warn("Acceptor is already unfrozen");
             }
         } else {
             LOGGER.warn("Crusher is not open");
         }
     }
 
-    public static void main(String[] arguments) throws Exception {
+    public static void main(String[] arguments) {
         TcpCrusherMain main = new TcpCrusherMain();
         main.run(arguments);
     }

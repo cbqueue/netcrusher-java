@@ -1,16 +1,17 @@
 package org.netcrusher.tcp.main;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore
-public class TcpCrusherMainTest {
+@Disabled
+class TcpCrusherMainTest {
 
     @Test
-    public void test() throws Exception {
+    void test() {
         String[] arguments = { "127.0.0.1:12345", "google.com:80" };
 
-        TcpCrusherMain.main(arguments);
+        Assertions.assertDoesNotThrow(() -> TcpCrusherMain.main(arguments));
     }
 
 }

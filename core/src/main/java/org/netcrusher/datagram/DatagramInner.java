@@ -184,7 +184,7 @@ class DatagramInner {
         return state.isAnyOf(State.FROZEN | State.CLOSED);
     }
 
-    private void callback(SelectionKey selectionKey) throws IOException {
+    private void callback(SelectionKey selectionKey) {
         if (selectionKey.isWritable()) {
             try {
                 handleWritableEvent(false);

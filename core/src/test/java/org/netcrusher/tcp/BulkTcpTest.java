@@ -1,9 +1,9 @@
 package org.netcrusher.tcp;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.netcrusher.core.filter.TransformFilter;
 import org.netcrusher.core.meter.RateMeters;
 import org.netcrusher.core.reactor.NioReactor;
@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 
-public class BulkTcpTest {
+class BulkTcpTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BulkTcpTest.class);
 
@@ -37,8 +37,8 @@ public class BulkTcpTest {
 
     private TcpBulkServer server;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         server = new TcpBulkServer(new InetSocketAddress(HOSTNAME, PORT_SERVER), COUNT);
         server.open();
 
@@ -57,16 +57,16 @@ public class BulkTcpTest {
             .buildAndOpen();
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @AfterEach
+    void tearDown() throws Exception {
         if (crusher != null) {
             crusher.close();
-            Assert.assertFalse(crusher.isOpen());
+            Assertions.assertFalse(crusher.isOpen());
         }
 
         if (reactor != null) {
             reactor.close();
-            Assert.assertFalse(reactor.isOpen());
+            Assertions.assertFalse(reactor.isOpen());
         }
 
         if (server != null) {
@@ -75,36 +75,36 @@ public class BulkTcpTest {
     }
 
     @Test
-    public void testBulk() throws Exception {
+    void testBulk() throws Exception {
         crusher.freeze();
-        Assert.assertTrue(crusher.isFrozen());
-        Assert.assertTrue(crusher.isOpen());
+        Assertions.assertTrue(crusher.isFrozen());
+        Assertions.assertTrue(crusher.isOpen());
 
         crusher.unfreeze();
-        Assert.assertFalse(crusher.isFrozen());
-        Assert.assertTrue(crusher.isOpen());
+        Assertions.assertFalse(crusher.isFrozen());
+        Assertions.assertTrue(crusher.isOpen());
 
         final InetSocketAddress serverAddress = new InetSocketAddress(HOSTNAME, PORT_CRUSHER);
         try (TcpBulkClient client1 = TcpBulkClient.forAddress("EXT", serverAddress, COUNT)) {
             final byte[] producer1Digest = client1.awaitProducerResult(SEND_WAIT_MS).getDigest();
 
-            Assert.assertEquals(1, server.getClients().size());
+            Assertions.assertEquals(1, server.getClients().size());
             try (TcpBulkClient client2 = server.getClients().iterator().next()) {
                 final byte[] producer2Digest = client2.awaitProducerResult(SEND_WAIT_MS).getDigest();
 
                 final byte[] consumer1Digest = client1.awaitConsumerResult(READ_WAIT_MS).getDigest();
                 final byte[] consumer2Digest = client2.awaitConsumerResult(READ_WAIT_MS).getDigest();
 
-                Assert.assertEquals(1, crusher.getClientAddresses().size());
+                Assertions.assertEquals(1, crusher.getClientAddresses().size());
                 InetSocketAddress clientAddress = crusher.getClientAddresses().iterator().next();
-                Assert.assertNotNull(clientAddress);
+                Assertions.assertNotNull(clientAddress);
 
                 RateMeters clientMeters = crusher.getClientByteMeters(clientAddress);
-                Assert.assertEquals(COUNT, clientMeters.getReadMeter().getTotalCount());
-                Assert.assertEquals(COUNT, clientMeters.getSentMeter().getTotalCount());
+                Assertions.assertEquals(COUNT, clientMeters.getReadMeter().getTotalCount());
+                Assertions.assertEquals(COUNT, clientMeters.getSentMeter().getTotalCount());
 
-                Assert.assertArrayEquals(producer1Digest, consumer2Digest);
-                Assert.assertArrayEquals(producer2Digest, consumer1Digest);
+                Assertions.assertArrayEquals(producer1Digest, consumer2Digest);
+                Assertions.assertArrayEquals(producer2Digest, consumer1Digest);
             }
         }
     }

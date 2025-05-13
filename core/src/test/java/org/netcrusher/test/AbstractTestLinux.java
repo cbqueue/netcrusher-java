@@ -1,7 +1,7 @@
 package org.netcrusher.test;
 
-import org.junit.Assume;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeAll;
 import org.slf4j.Logger;
 
 import java.util.Collection;
@@ -10,7 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-public abstract class AbstractLinuxTest {
+public abstract class AbstractTestLinux {
 
     protected static final Pattern MD5_PATTERN = Pattern.compile("[0-9abcdef]{32}");
 
@@ -18,12 +18,11 @@ public abstract class AbstractLinuxTest {
 
     protected static final String ADDR_LOOPBACK6 = "::1";
 
-    @BeforeClass
+    @BeforeAll
     public static void checkLinux() {
         String os = System.getProperty("os.name");
-        Assume.assumeTrue("This test runs only on Linux", "linux".equalsIgnoreCase(os));
-
-        Assume.assumeFalse("Linux tests are disabled", Boolean.getBoolean("skipLinuxTests"));
+        Assumptions.assumeTrue("linux".equalsIgnoreCase(os), "This test runs only on Linux");
+        Assumptions.assumeFalse(Boolean.getBoolean("skipLinuxTests"), "Linux tests are disabled");
     }
 
     protected static void output(Logger logger, String name, String lines) {

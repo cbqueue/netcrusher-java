@@ -1,6 +1,6 @@
-package org.netcrusher.datagram.thottling;
+package org.netcrusher.datagram.throttling;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.netcrusher.core.reactor.NioReactor;
 import org.netcrusher.core.throttle.rate.PacketRateThrottler;
 import org.netcrusher.datagram.DatagramCrusher;
@@ -11,9 +11,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
 
-public class OutgoingCountThottlingDatagramTest extends AbstractRateThottlingDatagramTest {
+public class OutgoingCountThrottlingDatagramTest extends AbstractRateThrottlingDatagramTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OutgoingCountThottlingDatagramTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OutgoingCountThrottlingDatagramTest.class);
 
     private static final int PACKET_PER_SEC = 80;
 
@@ -40,8 +40,8 @@ public class OutgoingCountThottlingDatagramTest extends AbstractRateThottlingDat
         double consumerRate = 1000.0 * consumerResult.getCount() / consumerResult.getElapsedMs();
         LOGGER.info("Consumer rate is {} packet/sec", consumerRate);
 
-        Assert.assertEquals(PACKET_PER_SEC, consumerRate, PACKET_PER_SEC * precisionAllowed);
-        Assert.assertArrayEquals(consumerResult.getDigest(), reflectorResult.getDigest());
+        Assertions.assertEquals(PACKET_PER_SEC, consumerRate, PACKET_PER_SEC * precisionAllowed);
+        Assertions.assertArrayEquals(consumerResult.getDigest(), reflectorResult.getDigest());
     }
 
 }

@@ -1,7 +1,7 @@
 package org.netcrusher.test;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.netcrusher.test.process.ProcessResult;
 import org.netcrusher.test.process.ProcessWrapper;
 
@@ -10,17 +10,17 @@ import java.util.List;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
-public class CheckLinuxTest extends AbstractLinuxTest {
+class CheckLinuxTest extends AbstractTestLinux {
 
     @Test
-    public void check() throws Exception {
-        Assert.assertTrue("<socat> is not found", ensureCommand(Arrays.asList("socat", "-V")));
-        Assert.assertTrue("<iperf3> is not found", ensureCommand(Arrays.asList("iperf3", "-v")));
-        Assert.assertTrue("<openssl> is not found", ensureCommand(Arrays.asList("openssl", "version")));
-        Assert.assertTrue("<pv> is not found", ensureCommand(Arrays.asList("pv", "-V")));
-        Assert.assertTrue("<tee> is not found", ensureCommand(Arrays.asList("tee", "--version")));
-        Assert.assertTrue("<dd> is not found", ensureCommand(Arrays.asList("dd", "--version")));
-        Assert.assertTrue("<bash> is not found", ensureCommand(Arrays.asList("bash", "--version")));
+    void check() throws Exception {
+        Assertions.assertTrue(ensureCommand(Arrays.asList("socat", "-V")), "<socat> is not found");
+        Assertions.assertTrue(ensureCommand(Arrays.asList("iperf3", "-v")), "<iperf3> is not found");
+        Assertions.assertTrue(ensureCommand(Arrays.asList("openssl", "version")), "<openssl> is not found");
+        Assertions.assertTrue(ensureCommand(Arrays.asList("pv", "-V")), "<pv> is not found");
+        Assertions.assertTrue(ensureCommand(Arrays.asList("tee", "--version")), "<tee> is not found");
+        Assertions.assertTrue(ensureCommand(Arrays.asList("dd", "--version")), "<dd> is not found");
+        Assertions.assertTrue(ensureCommand(Arrays.asList("bash", "--version")), "<bash> is not found");
     }
 
     private static boolean ensureCommand(List<String> commands) throws Exception {
@@ -32,16 +32,16 @@ public class CheckLinuxTest extends AbstractLinuxTest {
     }
 
     @Test
-    public void checkMd5Extraction() {
+    void checkMd5Extraction() {
         List<String> hashes = extractMd5(Arrays.asList(
             "rwgrw g w 10f8941b7e6239f4e2af05fa916037fd rwgr",
             "10f8941b7e6239f4e2af05fa916038fd",
             "10f8941b7e6239f4e2af05fa916039fd rwgr"
         )).collect(Collectors.toList());
 
-        Assert.assertEquals(3, hashes.size());
-        Assert.assertEquals("10f8941b7e6239f4e2af05fa916037fd", hashes.get(0));
-        Assert.assertEquals("10f8941b7e6239f4e2af05fa916038fd", hashes.get(1));
-        Assert.assertEquals("10f8941b7e6239f4e2af05fa916039fd", hashes.get(2));
+        Assertions.assertEquals(3, hashes.size());
+        Assertions.assertEquals("10f8941b7e6239f4e2af05fa916037fd", hashes.get(0));
+        Assertions.assertEquals("10f8941b7e6239f4e2af05fa916038fd", hashes.get(1));
+        Assertions.assertEquals("10f8941b7e6239f4e2af05fa916039fd", hashes.get(2));
     }
 }

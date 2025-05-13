@@ -1,14 +1,14 @@
 package org.netcrusher.tcp.linux.socat.throttling;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.netcrusher.core.reactor.NioReactor;
 import org.netcrusher.core.throttle.rate.ByteRateThrottler;
 import org.netcrusher.tcp.TcpCrusher;
 import org.netcrusher.tcp.TcpCrusherBuilder;
-import org.netcrusher.tcp.linux.socat.AbstractTcpSocatTest;
+import org.netcrusher.tcp.linux.socat.AbstractTcpSocatTestLinux;
 import org.netcrusher.test.process.ProcessResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,9 +18,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class AbstractThottlingTcpSocatTest extends AbstractTcpSocatTest {
+public abstract class AbstractThrottlingTcpSocatTestLinux extends AbstractTcpSocatTestLinux {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractThottlingTcpSocatTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractThrottlingTcpSocatTestLinux.class);
 
     private static final double PRECISION = 0.05;
 
@@ -34,12 +34,12 @@ public abstract class AbstractThottlingTcpSocatTest extends AbstractTcpSocatTest
 
     private final int durationSec;
 
-    public AbstractThottlingTcpSocatTest(int bytePerSec, int durationSec) {
+    public AbstractThrottlingTcpSocatTestLinux(int bytePerSec, int durationSec) {
         this.bytePerSec = bytePerSec;
         this.durationSec = durationSec;
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         reactor = new NioReactor(10);
 
@@ -58,16 +58,16 @@ public abstract class AbstractThottlingTcpSocatTest extends AbstractTcpSocatTest
             .buildAndOpen();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         if (crusher != null) {
             crusher.close();
-            Assert.assertFalse(crusher.isOpen());
+            Assertions.assertFalse(crusher.isOpen());
         }
 
         if (reactor != null) {
             reactor.close();
-            Assert.assertFalse(reactor.isOpen());
+            Assertions.assertFalse(reactor.isOpen());
         }
     }
 
@@ -92,7 +92,7 @@ public abstract class AbstractThottlingTcpSocatTest extends AbstractTcpSocatTest
         double duration = Double.parseDouble(consumerDuration);
         LOGGER.info("Duration: {} sec", duration);
 
-        Assert.assertEquals(this.durationSec, duration, this.bytePerSec * PRECISION);
+        Assertions.assertEquals(this.durationSec, duration, this.bytePerSec * PRECISION);
     }
 
 }

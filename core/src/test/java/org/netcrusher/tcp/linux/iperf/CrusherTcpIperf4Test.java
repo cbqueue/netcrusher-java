@@ -1,16 +1,16 @@
 package org.netcrusher.tcp.linux.iperf;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.netcrusher.core.reactor.NioReactor;
 import org.netcrusher.tcp.TcpCrusher;
 import org.netcrusher.tcp.TcpCrusherBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CrusherTcpIperf4Test extends AbstractTcpIperfTest {
+class CrusherTcpIperf4Test extends AbstractTcpIperfTestLinux {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CrusherTcpIperf4Test.class);
 
@@ -18,8 +18,8 @@ public class CrusherTcpIperf4Test extends AbstractTcpIperfTest {
 
     private TcpCrusher crusher;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         reactor = new NioReactor(10);
 
         crusher = TcpCrusherBuilder.builder()
@@ -33,21 +33,21 @@ public class CrusherTcpIperf4Test extends AbstractTcpIperfTest {
             .buildAndOpen();
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @AfterEach
+    void tearDown() {
         if (crusher != null) {
             crusher.close();
-            Assert.assertFalse(crusher.isOpen());
+            Assertions.assertFalse(crusher.isOpen());
         }
 
         if (reactor != null) {
             reactor.close();
-            Assert.assertFalse(reactor.isOpen());
+            Assertions.assertFalse(reactor.isOpen());
         }
     }
 
     @Test
-    public void test() throws Exception {
-        loop(IPERF_SERVER, IPERF4_CLIENT_PROXIED);
+    void test() {
+        Assertions.assertDoesNotThrow(() -> loop(IPERF_SERVER, IPERF4_CLIENT_PROXIED));
     }
 }
